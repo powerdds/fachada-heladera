@@ -28,7 +28,5 @@ public class TemperaturaRepository extends Repository <Temperatura> {
         } finally {
             EntityManagerHelper.closeEntityManager();
         }
-
-
     }
 }

@@ -36,7 +36,7 @@ public class Heladera {
     float temperaturaMin;
     @Transient
     float temperaturaMax;
-    @Transient
+    @Column
     long cantidadAperturas;
 
     public Heladera(String nombre) {

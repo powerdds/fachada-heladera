@@ -9,9 +9,13 @@ import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
 import ar.edu.utn.dds.k3003.repositories.HeladerasRepository;
 import ar.edu.utn.dds.k3003.model.mappers.TemperaturaMapper;
 import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
+import ar.edu.utn.dds.k3003.utils.MetricsRegistry;
+import io.micrometer.core.instrument.Gauge;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class Fachada implements FachadaHeladeras {
@@ -22,12 +26,42 @@ public class Fachada implements FachadaHeladeras {
  private final TemperaturaMapper temperaturaMapper;
  private FachadaViandas fachadaViandas;
 
+ // Un mapa que contendrá las métricas de cantidad de viandas por heladeras
+ private ConcurrentHashMap<Long, AtomicReference<Integer>> viandasPorHeladeras;
+
  public Fachada() {
   this.heladerasRepository = new HeladerasRepository();
   this.heladeraMapper = new HeladeraMapper();
   this.temperaturaRepository=new TemperaturaRepository();
   this.temperaturaMapper=new TemperaturaMapper();
+  inicializarCantidadViandasPorHeladeras();
  }
+
+    private void inicializarCantidadViandasPorHeladeras() {
+
+     this.viandasPorHeladeras = new ConcurrentHashMap<>();
+     var heladeras = this.heladerasRepository.findAllwithCantViandas();
+
+     heladeras.forEach(heladera -> {
+         Long heladeraId = (Long) heladera[0];
+         int cantidadViandas = (int) heladera[1];
+         actualizarMetricacantidadViandasHeladera(heladeraId, cantidadViandas);
+     });
+    }
+
+    // Registrar o actualizar la métrica para una heladera específica
+    private void actualizarMetricacantidadViandasHeladera(Long heladeraId, int cantidadViandas) {
+        viandasPorHeladeras.computeIfAbsent(heladeraId, id -> {
+            // Crear y registrar una nueva métrica si no existe para esta heladera
+            AtomicReference<Integer> cantidadViandasRef = new AtomicReference<>(cantidadViandas);
+            Gauge.builder("heladera.viandas.actual", cantidadViandasRef, AtomicReference::get)
+                    .description("Cantidad de viandas actual de la heladera " + heladeraId)
+                    .tag("heladeraId", String.valueOf(heladeraId))
+                    .register(MetricsRegistry.getRegistry());
+            return cantidadViandasRef;
+        }).set(cantidadViandas);  // Actualizamos la temperatura si ya existe
+    }
+
     public Fachada(HeladerasRepository heladerasRepository, HeladeraMapper heladeraMapper, TemperaturaRepository temperaturaRepository, TemperaturaMapper temperaturaMapper) {
         this.heladerasRepository = heladerasRepository;
         this.heladeraMapper = heladeraMapper;
@@ -55,6 +89,7 @@ public class Fachada implements FachadaHeladeras {
         }
         heladera.depositarVianda();
         this.heladerasRepository.update(heladera);
+        actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
     }
 
     @Override public Integer cantidadViandas(Integer heladeraId) throws NoSuchElementException{
@@ -79,11 +114,10 @@ public class Fachada implements FachadaHeladeras {
         try {
             heladera.retirarVianda();
             this.heladerasRepository.update(heladera);
+            actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
         } catch (Exception e) {
             throw new RuntimeException("No hay viandas para retirar");
         }
-
-
     }
 
     @Override public void temperatura(TemperaturaDTO temperaturaDTO){
