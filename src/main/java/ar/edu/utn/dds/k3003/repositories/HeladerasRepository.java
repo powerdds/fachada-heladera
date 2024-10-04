@@ -40,4 +40,5 @@ public class HeladerasRepository extends Repository <Heladera> {
             EntityManagerHelper.closeEntityManager();
         }
     }
+
 }
