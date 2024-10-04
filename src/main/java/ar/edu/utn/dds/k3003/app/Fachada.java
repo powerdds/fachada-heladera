@@ -33,8 +33,8 @@ public class Fachada implements FachadaHeladeras {
  public Fachada() {
   this.heladerasRepository = new HeladerasRepository();
   this.heladeraMapper = new HeladeraMapper();
-  this.temperaturaRepository=new TemperaturaRepository();
-  this.temperaturaMapper=new TemperaturaMapper();
+  this.temperaturaRepository= new TemperaturaRepository();
+  this.temperaturaMapper = new TemperaturaMapper();
   inicializarCantidadViandasPorHeladeras();
   inicializarCantidadAperturasxHeladera();
  }
@@ -115,7 +115,8 @@ public class Fachada implements FachadaHeladeras {
             throw new RuntimeException("La Vianda "+qrVianda+ " no esta preparada ni en traslado, no se puede depositar");
         }
         if(vianda.getEstado() == EstadoViandaEnum.PREPARADA){//evitar doble llamado con traslados
-            fachadaViandas.modificarEstado(qrVianda, EstadoViandaEnum.DEPOSITADA);
+            fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.DEPOSITADA);
+            fachadaViandas.modificarHeladera(vianda.getCodigoQR(),heladeraId);
         }
         heladera.depositarVianda();
         this.heladerasRepository.update(heladera);
@@ -143,8 +144,8 @@ public class Fachada implements FachadaHeladeras {
        
         try {
             heladera.retirarVianda();
-          fachadaViandas.modificarEstado(retiro.getQrVianda(), EstadoViandaEnum.RETIRADA);
-        fachadaViandas.modificarHeladera(retiro.getQrVianda(),-1);
+            fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.RETIRADA);
+            fachadaViandas.modificarHeladera(vianda.getCodigoQR(),-1);
             this.heladerasRepository.update(heladera);
             actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
             actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
