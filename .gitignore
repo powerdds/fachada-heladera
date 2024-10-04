@@ -1,0 +1,14 @@
+# Directorios de compilación
+/dist/
+build/
+
+# Archivos del editor
+.idea/
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
+target
+
+# Configuración de entorno local
+.env
