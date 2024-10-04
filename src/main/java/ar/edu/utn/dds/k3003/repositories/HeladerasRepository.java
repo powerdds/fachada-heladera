@@ -20,7 +20,7 @@ public class HeladerasRepository extends Repository <Heladera> {
     public List<Object[]> findAllwithCantViandas() {
         EntityManager em = EntityManagerHelper.getEntityManager();
 
-        String jpql = "SELECT h.nombre, COUNT(v) FROM Heladera h " +
+        String jpql = "SELECT h.id, COUNT(v) FROM Heladera h " +
                 "LEFT JOIN h.viandas v " +
                 "GROUP BY h.id";
         try {
@@ -30,4 +30,16 @@ public class HeladerasRepository extends Repository <Heladera> {
         }
     }
 
+
+    public List<Object[]> findAllwithCantAperturas() {
+        EntityManager em = EntityManagerHelper.getEntityManager();
+
+        String jpql = "SELECT h.id, h.cantidadAperturas FROM Heladera h";
+
+        try {
+            return  em.createQuery(jpql, Object[].class).getResultList();
+        } finally {
+            EntityManagerHelper.closeEntityManager();
+        }
+    }
 }

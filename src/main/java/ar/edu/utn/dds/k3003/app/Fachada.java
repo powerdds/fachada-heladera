@@ -28,6 +28,7 @@ public class Fachada implements FachadaHeladeras {
 
  // Un mapa que contendrá las métricas de cantidad de viandas por heladeras
  private ConcurrentHashMap<Long, AtomicReference<Integer>> viandasPorHeladeras;
+ private ConcurrentHashMap<Long, AtomicReference<Integer>> aperturasPorHeladeras;
 
  public Fachada() {
   this.heladerasRepository = new HeladerasRepository();
@@ -35,7 +36,31 @@ public class Fachada implements FachadaHeladeras {
   this.temperaturaRepository=new TemperaturaRepository();
   this.temperaturaMapper=new TemperaturaMapper();
   inicializarCantidadViandasPorHeladeras();
+  inicializarCantidadAperturasxHeladera();
  }
+
+    private void inicializarCantidadAperturasxHeladera() {
+        this.aperturasPorHeladeras = new ConcurrentHashMap<>();
+        var heladeras = this.heladerasRepository.findAllwithCantAperturas();
+
+        heladeras.forEach(heladera -> {
+            Long heladeraId = (Long) heladera[0];
+            int cantidadAperturas = (int) heladera[1];
+            actualizarMetricacantidadAperturasHeladera(heladeraId, cantidadAperturas);
+        });
+    }
+
+    private void actualizarMetricacantidadAperturasHeladera(Long heladeraId, int cantidadAperturas) {
+        aperturasPorHeladeras.computeIfAbsent(heladeraId, id -> {
+            // Crear y registrar una nueva métrica si no existe para esta heladera
+            AtomicReference<Integer> cantidadAperturasRef = new AtomicReference<>(cantidadAperturas);
+            Gauge.builder("heladera.aperturas.actual", cantidadAperturasRef, AtomicReference::get)
+                    .description("Cantidad de aperturas actuales de la heladera " + heladeraId)
+                    .tag("heladeraId", String.valueOf(heladeraId))
+                    .register(MetricsRegistry.getRegistry());
+            return cantidadAperturasRef;
+        }).set(cantidadAperturas);  // Actualizamos la temperatura si ya existe
+    }
 
     private void inicializarCantidadViandasPorHeladeras() {
 
@@ -90,6 +115,7 @@ public class Fachada implements FachadaHeladeras {
         heladera.depositarVianda();
         this.heladerasRepository.update(heladera);
         actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
+        actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
     }
 
     @Override public Integer cantidadViandas(Integer heladeraId) throws NoSuchElementException{
@@ -115,6 +141,7 @@ public class Fachada implements FachadaHeladeras {
             heladera.retirarVianda();
             this.heladerasRepository.update(heladera);
             actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
+            actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
         } catch (Exception e) {
             throw new RuntimeException("No hay viandas para retirar");
         }
