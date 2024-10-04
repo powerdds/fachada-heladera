@@ -20,7 +20,7 @@ public class HeladerasRepository extends Repository <Heladera> {
     public List<Object[]> findAllwithCantViandas() {
         EntityManager em = EntityManagerHelper.getEntityManager();
 
-        String jpql = "SELECT h.id, h.viandas FROM Heladera h ";
+        String jpql = "SELECT h.id, h.viandas FROM Heladera h";
         try {
             return em.createQuery(jpql, Object[].class).getResultList();
         } finally {

@@ -45,7 +45,12 @@ public class Fachada implements FachadaHeladeras {
 
         heladeras.forEach(heladera -> {
             Long heladeraId = (Long) heladera[0];
-            int cantidadAperturas = (int) heladera[1];
+            int cantidadAperturas = 0;
+
+            if (heladera[1] != null) {
+                cantidadAperturas = (int) heladera[1];
+            }
+
             actualizarMetricacantidadAperturasHeladera(heladeraId, cantidadAperturas);
         });
     }
