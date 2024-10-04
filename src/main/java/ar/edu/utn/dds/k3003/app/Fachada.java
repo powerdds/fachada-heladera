@@ -140,10 +140,11 @@ public class Fachada implements FachadaHeladeras {
         if(!Objects.equals(vianda.getHeladeraId(), retiro.getHeladeraId())){//la heladera de la que se quiere retirar la vianda es la heladera en la que realmente esta la vianda
             throw new RuntimeException("La Vianda "+retiro.getQrVianda()+ " no esta depositada en esta heladera "+retiro.getHeladeraId());
         }
-        fachadaViandas.modificarEstado(retiro.getQrVianda(), EstadoViandaEnum.RETIRADA);
-        fachadaViandas.modificarHeladera(retiro.getQrVianda(),-1);
+       
         try {
             heladera.retirarVianda();
+          fachadaViandas.modificarEstado(retiro.getQrVianda(), EstadoViandaEnum.RETIRADA);
+        fachadaViandas.modificarHeladera(retiro.getQrVianda(),-1);
             this.heladerasRepository.update(heladera);
             actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
             actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
