@@ -145,10 +145,10 @@ public class Fachada implements FachadaHeladeras {
                 && vianda.getEstado()!=EstadoViandaEnum.EN_TRASLADO){
             throw new RuntimeException("La Vianda "+qrVianda+ " no esta preparada ni en traslado, no se puede depositar");
         }
-        if(vianda.getEstado() == EstadoViandaEnum.PREPARADA){//evitar doble llamado con traslados
-            fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.DEPOSITADA);
-            fachadaViandas.modificarHeladera(vianda.getCodigoQR(),heladeraId);
-        }
+//        if(vianda.getEstado() == EstadoViandaEnum.PREPARADA){//evitar doble llamado con traslados
+//        }
+        fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.DEPOSITADA);
+        fachadaViandas.modificarHeladera(vianda.getCodigoQR(),heladeraId);
         heladera.depositarVianda();
         this.heladerasRepository.update(heladera);
         actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
