@@ -18,8 +18,8 @@ public class TemperaturaController {
         var status = 200;
         try {
             var temperaturaDTO = this.fachada.obtenerTemperaturas(id);
-            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Temperaturas obtenidas correctamente", temperaturaDTO);
-            context.status(status).json(respuestaDTO);
+            //RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Temperaturas obtenidas correctamente", temperaturaDTO);
+            context.status(status).json(temperaturaDTO);
         } catch (NoSuchElementException ex) {
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);

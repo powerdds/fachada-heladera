@@ -22,8 +22,8 @@ public class HeladeraController {
         var status = 200;
         try {
             var heladeraDTORta = this.fachada.agregar(heladeraDTO);
-            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera agregada correctamente", heladeraDTORta);
-            context.status(status).json(respuestaDTO);
+            //RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera agregada correctamente", heladeraDTORta);
+            context.status(status).json(heladeraDTORta);
         } catch(NoSuchElementException ex){
             status = 400;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
@@ -36,8 +36,8 @@ public class HeladeraController {
         var status = 200;
         try {
             var heladera = this.fachada.obtenerHeladera(id);
-            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera obtenida correctamente", heladera);
-            context.status(status).json(respuestaDTO);
+            //RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera obtenida correctamente", heladera);
+            context.status(status).json(heladera);
 
         } catch (NoSuchElementException ex) {
             status = 404;
@@ -92,8 +92,8 @@ public class HeladeraController {
         var status = 200;
         try {
             var heladeraDTORta = this.fachada.obtenerHeladeras();
-            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Solicitud exitosa", heladeraDTORta);
-            context.status(status).json(respuestaDTO);
+            //RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Solicitud exitosa", heladeraDTORta);
+            context.status(status).json(heladeraDTORta);
         } catch(NoSuchElementException ex){
             status = 400;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);

@@ -105,7 +105,7 @@ public class WebApp {
 
         // registramos el plugin de Micrometer dentro de la config de la app de
         // Javalin
-        return Javalin.create(config -> config.registerPlugin(micrometerPlugin)).start(8080);
+        return Javalin.create(config -> config.registerPlugin(micrometerPlugin)).start();
     }
 
     // Configurar el ObjectMapper
