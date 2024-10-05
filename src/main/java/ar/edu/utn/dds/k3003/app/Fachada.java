@@ -29,7 +29,6 @@ public class Fachada implements FachadaHeladeras {
  // Un mapa que contendrá las métricas de cantidad de viandas por heladeras
  private ConcurrentHashMap<Long, AtomicReference<Integer>> viandasPorHeladeras;
  private ConcurrentHashMap<Long, AtomicReference<Integer>> aperturasPorHeladeras;
- private ConcurrentHashMap<Long, AtomicReference<Integer>> temperaturasxHeladeras;
 
  public Fachada() {
   this.heladerasRepository = new HeladerasRepository();
@@ -38,37 +37,7 @@ public class Fachada implements FachadaHeladeras {
   this.temperaturaMapper = new TemperaturaMapper();
   inicializarCantidadViandasPorHeladeras();
   inicializarCantidadAperturasxHeladera();
-  inicializartemperaturasxHeladera();
  }
-
-    private void inicializartemperaturasxHeladera() {
-        this.temperaturasxHeladeras = new ConcurrentHashMap<>();
-        var heladeras = this.temperaturaRepository.findAllHeladerasLastTemperatura();
-
-        heladeras.forEach(heladera -> {
-            Long heladeraId = (Long) heladera[0];
-            int temperaturas = 0;
-
-            if (heladera[1] != null) {
-               temperaturas = (int) heladera[1];
-            }
-
-            actualizarMetricatemperaturasPorHeladeras(heladeraId, temperaturas);
-        });
-    }
-
-    private void actualizarMetricatemperaturasPorHeladeras(Long heladeraId, int temperatura) {
-        temperaturasxHeladeras.computeIfAbsent(heladeraId, id -> {
-            // Crear y registrar una nueva métrica si no existe para esta heladera
-            AtomicReference<Integer> temperaturaRef = new AtomicReference<>(temperatura);
-            Gauge.builder("heladera.temperatura.actual", temperaturaRef, AtomicReference::get)
-                    .description("Temperatura actual de la heladera " + heladeraId)
-                    .tag("heladeraId", String.valueOf(heladeraId))
-                    .register(MetricsRegistry.getRegistry());
-            return temperaturaRef;
-        }).set(temperatura);  // Actualizamos la temperatura si ya existe
-    }
-
 
     private void inicializarCantidadAperturasxHeladera() {
         this.aperturasPorHeladeras = new ConcurrentHashMap<>();
