@@ -223,4 +223,9 @@ public class Fachada implements FachadaHeladeras {
      heladerasRepository.findAll().forEach(heladerasRepository::delete);
         return heladerasRepository.findAll().isEmpty() && temperaturaRepository.findAll().isEmpty();
     }
+
+    public List<HeladeraDTO> obtenerHeladeras() {
+        return heladeraMapper.originToListDTO(this.heladerasRepository.findAll());
+    }
+
 }

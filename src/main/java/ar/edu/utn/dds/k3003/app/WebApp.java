@@ -47,6 +47,8 @@ public class WebApp {
     }
 
     private static void definirRutas(Javalin app) {
+
+        app.get("/heladeras", heladeraController::getHeladeras);
         app.post("/heladeras", heladeraController::agregar);
         app.get("/heladeras/{id}", heladeraController::obtener);
         app.post("/temperaturas", temperaturaController::agregar);

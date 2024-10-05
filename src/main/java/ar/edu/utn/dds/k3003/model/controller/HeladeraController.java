@@ -5,6 +5,7 @@ import ar.edu.utn.dds.k3003.facades.dtos.HeladeraDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.RetiroDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.ViandaDTO;
 import io.javalin.http.Context;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.NoSuchElementException;
 
@@ -83,6 +84,19 @@ public class HeladeraController {
         else{
             status = 400;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "No se borro la BD =(", null);
+            context.status(status).json(respuestaDTO);
+        }
+    }
+
+    public void getHeladeras(@NotNull Context context) {
+        var status = 200;
+        try {
+            var heladeraDTORta = this.fachada.obtenerHeladeras();
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Solicitud exitosa", heladeraDTORta);
+            context.status(status).json(respuestaDTO);
+        } catch(NoSuchElementException ex){
+            status = 400;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
     }
