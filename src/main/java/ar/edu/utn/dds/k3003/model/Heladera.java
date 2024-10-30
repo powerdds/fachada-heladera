@@ -1,6 +1,6 @@
 package ar.edu.utn.dds.k3003.model;
 
-import ar.edu.utn.dds.k3003.model.controller.dtos.TipoIncidente;
+import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -34,7 +34,7 @@ public class Heladera {
     @Column
     private int cantidadAperturas;
     @Column(name = "Tipo_falla")
-    private TipoIncidente tipoIncidente;
+    private TipoAlerta tipoIncidente;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "heladera_id")
@@ -74,7 +74,7 @@ public class Heladera {
         this.tipoIncidente = null;
     }
 
-    public void falla(TipoIncidente tipoIncidente) {
+    public void falla(TipoAlerta tipoIncidente) {
         this.activa = false;
         this.tipoIncidente = tipoIncidente;
     }

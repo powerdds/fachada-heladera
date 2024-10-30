@@ -4,11 +4,10 @@ import ar.edu.utn.dds.k3003.app.Fachada;
 import ar.edu.utn.dds.k3003.facades.dtos.HeladeraDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.RetiroDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.ViandaDTO;
-import ar.edu.utn.dds.k3003.model.ColaboradorSuscrito;
 import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.RespuestaDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
-import ar.edu.utn.dds.k3003.model.controller.dtos.TipoIncidente;
+import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
@@ -139,7 +138,7 @@ public class HeladeraController {
 
     public void reportarFalla(@NotNull Context context) {
         var heladeraId = context.pathParamAsClass("id", Integer.class).get();
-        var alerta = new AlertaDTO(heladeraId, TipoIncidente.FALLA_TECNICA);
+        var alerta = new AlertaDTO(heladeraId, TipoAlerta.FALLA_TECNICA);
         var status = 200;
         try {
             this.fachada.reportarAlerta(alerta);

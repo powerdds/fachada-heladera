@@ -1,7 +1,6 @@
 package ar.edu.utn.dds.k3003.app;
 
 import ar.edu.utn.dds.k3003.clientes.colaboradores.ColaboradoresProxy;
-import ar.edu.utn.dds.k3003.facades.FachadaColaboradores;
 import ar.edu.utn.dds.k3003.facades.FachadaHeladeras;
 import ar.edu.utn.dds.k3003.facades.FachadaViandas;
 import ar.edu.utn.dds.k3003.facades.dtos.*;
@@ -10,7 +9,6 @@ import ar.edu.utn.dds.k3003.model.Heladera;
 import ar.edu.utn.dds.k3003.model.Temperatura;
 import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
-import ar.edu.utn.dds.k3003.model.mappers.ColaboradorSuscritoMapper;
 import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
 import ar.edu.utn.dds.k3003.repositories.HeladerasRepository;
 import ar.edu.utn.dds.k3003.model.mappers.TemperaturaMapper;
@@ -238,10 +236,10 @@ public class Fachada implements FachadaHeladeras {
 
         List<ColaboradorSuscrito> colaboradores = heladera.getColaboradores();
 
-        switch (alerta.getTipoFraude()){
+        switch (alerta.getTipoAlerta()){
             case FALLA_TECNICA, SIN_CONEXION, TEMPERATURA_ALTA, TEMPERATURA_BAJA, MOVIMIENTO -> {
                 colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
-                heladera.falla(alerta.getTipoFraude());
+                heladera.falla(alerta.getTipoAlerta());
             }
             case MAXIMOVIANDAS -> {
                 colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();

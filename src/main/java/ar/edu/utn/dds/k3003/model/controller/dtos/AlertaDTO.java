@@ -9,12 +9,12 @@ import java.util.List;
 @Data
 public class AlertaDTO {
     private Integer heladeraId;
-    private TipoIncidente tipoFraude;
+    private TipoAlerta tipoAlerta;
     private List<Integer> colaboradoresId;
 
-    public AlertaDTO(Integer heladeraId, TipoIncidente tipoIncidente) {
+    public AlertaDTO(Integer heladeraId, TipoAlerta tipoIncidente) {
         this.heladeraId = heladeraId;
-        this.tipoFraude = tipoIncidente;
+        this.tipoAlerta = tipoIncidente;
     }
 }
 

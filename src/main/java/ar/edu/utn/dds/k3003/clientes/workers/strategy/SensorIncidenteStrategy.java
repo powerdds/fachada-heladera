@@ -9,19 +9,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-public class SensorMovimientoFraudeStrategy implements MensajeStrategy {
+public class SensorIncidenteStrategy implements MensajeStrategy {
 
     private final ObjectMapper objectMapper;
     private final Fachada fachada;
-    public SensorMovimientoFraudeStrategy() {
+    public SensorIncidenteStrategy() {
         this.objectMapper = ObjectMapperHelper.createObjectMapper();
         this.fachada = crearFachada(objectMapper);
     }
 
     @Override
     public void procesarMensage(byte[] body) throws IOException {
-        AlertaDTO fraudeDTO = objectMapper.readValue(body, AlertaDTO.class);
-        this.fachada.reportarAlerta(fraudeDTO);
+        AlertaDTO alertaDTO = objectMapper.readValue(body, AlertaDTO.class);
+        this.fachada.reportarAlerta(alertaDTO);
+        System.out.println("Se a notificado el incidente " + alertaDTO.getTipoAlerta() + " con exito");
     }
 
     // Crear la fachada

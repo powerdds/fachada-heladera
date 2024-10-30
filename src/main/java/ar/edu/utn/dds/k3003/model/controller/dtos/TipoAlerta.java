@@ -1,6 +1,6 @@
 package ar.edu.utn.dds.k3003.model.controller.dtos;
 
-public enum TipoIncidente {
+public enum TipoAlerta {
     MOVIMIENTO, // Me llega de la cola de mensajeria
     TEMPERATURA_ALTA, // Me llega de la cola de mensajeria
     TEMPERATURA_BAJA, // Me llega de la cola de mensajeria
