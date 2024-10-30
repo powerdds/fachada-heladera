@@ -23,10 +23,10 @@ public class ColaboradorSuscrito {
 
     public ColaboradorSuscrito() {}
 
-    public ColaboradorSuscrito(Integer colaboradorId, Integer temperaturaMax, Integer temperaturaMin, Boolean reportarIncidentes) {
+    public ColaboradorSuscrito(Integer colaboradorId, Integer maximoViandas, Integer minimoViandas, Boolean reportarIncidentes) {
         this.colaboradorId = colaboradorId;
-        this.maximoViandas = temperaturaMax;
-        this.minimoViandas = temperaturaMin;
+        this.maximoViandas = maximoViandas;
+        this.minimoViandas = minimoViandas;
         this.reportarIncidente = reportarIncidentes;
     }
 }

@@ -7,7 +7,7 @@ public class ColaboradorSuscritoMapper {
 
     public ColaboradorSuscrito toOrigin(SuscripcionDTO suscripcionDTO){
         return new ColaboradorSuscrito(suscripcionDTO.colaboradorId,
-                suscripcionDTO.temperaturaMax, suscripcionDTO.temperaturaMin, suscripcionDTO.reportarIncidentes);
+                suscripcionDTO.maximoViandas, suscripcionDTO.minimoViandas, suscripcionDTO.reportarIncidentes);
     }
 
 }

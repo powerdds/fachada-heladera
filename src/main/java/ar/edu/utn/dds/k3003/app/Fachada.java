@@ -222,7 +222,7 @@ public class Fachada implements FachadaHeladeras {
         this.fachadaColaboradores.buscarXId(Long.valueOf(suscripcionDTO.colaboradorId));
 
         var colaboradorSuscrito = new ColaboradorSuscrito(suscripcionDTO.colaboradorId,
-                suscripcionDTO.temperaturaMax, suscripcionDTO.temperaturaMin, suscripcionDTO.reportarIncidentes);
+                suscripcionDTO.maximoViandas, suscripcionDTO.minimoViandas, suscripcionDTO.reportarIncidentes);
 
         heladera.agregarSuscriptor(colaboradorSuscrito);
 
@@ -236,10 +236,18 @@ public class Fachada implements FachadaHeladeras {
 
         List<ColaboradorSuscrito> colaboradores = heladera.getColaboradores();
 
+        Boolean heladeraActiva = true;
+
         switch (alerta.getTipoAlerta()){
             case FALLA_TECNICA, SIN_CONEXION, TEMPERATURA_ALTA, TEMPERATURA_BAJA, MOVIMIENTO -> {
-                colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
-                heladera.falla(alerta.getTipoAlerta());
+
+                if(heladera.isActiva()){
+                    colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
+                    heladera.falla(alerta.getTipoAlerta());
+                } else {
+                    heladeraActiva = false;
+                }
+
             }
             case MAXIMOVIANDAS -> {
                 colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
@@ -252,7 +260,7 @@ public class Fachada implements FachadaHeladeras {
             }
         }
 
-        if(!colaboradores.isEmpty()){
+        if(!colaboradores.isEmpty() && heladeraActiva){
             alerta.setColaboradoresId(colaboradores.stream().map(ColaboradorSuscrito::getColaboradorId).toList());
             this.fachadaColaboradores.reportarAlerta(alerta);
         }
