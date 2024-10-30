@@ -119,8 +119,6 @@ public class Fachada implements FachadaHeladeras {
                 && vianda.getEstado()!=EstadoViandaEnum.EN_TRASLADO){
             throw new RuntimeException("La Vianda "+qrVianda+ " no esta preparada ni en traslado, no se puede depositar");
         }
-//        if(vianda.getEstado() == EstadoViandaEnum.PREPARADA){//evitar doble llamado con traslados
-//        }
         fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.DEPOSITADA);
         fachadaViandas.modificarHeladera(vianda.getCodigoQR(),heladeraId);
         heladera.depositarVianda();
@@ -236,7 +234,7 @@ public class Fachada implements FachadaHeladeras {
 
         List<ColaboradorSuscrito> colaboradores = heladera.getColaboradores();
 
-        Boolean heladeraActiva = true;
+        boolean heladeraActiva = true;
 
         switch (alerta.getTipoAlerta()){
             case FALLA_TECNICA, SIN_CONEXION, TEMPERATURA_ALTA, TEMPERATURA_BAJA, MOVIMIENTO -> {
@@ -249,15 +247,9 @@ public class Fachada implements FachadaHeladeras {
                 }
 
             }
-            case MAXIMOVIANDAS -> {
-                colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
-            }
-            case MINIMOVIANDAS -> {
-                colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
-            }
-            default -> {
-                colaboradores.clear();
-            }
+            case MAXIMOVIANDAS -> colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
+            case MINIMOVIANDAS -> colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
+            default -> colaboradores.clear();
         }
 
         if(!colaboradores.isEmpty() && heladeraActiva){
