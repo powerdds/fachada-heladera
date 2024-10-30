@@ -4,6 +4,11 @@ import ar.edu.utn.dds.k3003.app.Fachada;
 import ar.edu.utn.dds.k3003.facades.dtos.HeladeraDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.RetiroDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.ViandaDTO;
+import ar.edu.utn.dds.k3003.model.ColaboradorSuscrito;
+import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
+import ar.edu.utn.dds.k3003.model.controller.dtos.RespuestaDTO;
+import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
+import ar.edu.utn.dds.k3003.model.controller.dtos.TipoIncidente;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +30,7 @@ public class HeladeraController {
             //RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera agregada correctamente", heladeraDTORta);
             context.status(status).json(heladeraDTORta);
         } catch(NoSuchElementException ex){
-            status = 400;
+            status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
@@ -53,7 +58,7 @@ public class HeladeraController {
             RespuestaDTO respuestaDTO = new RespuestaDTO(200, "Vianda depositada correctamente", null);
             context.status(200).json(respuestaDTO);
         } catch (Exception ex){
-            status = 400;
+            status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
@@ -67,7 +72,7 @@ public class HeladeraController {
             context.status(status).json(respuestaDTO);
         }
         catch(Exception ex){
-            status = 400;
+            status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: "+ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
@@ -82,7 +87,7 @@ public class HeladeraController {
             context.status(status).json(respuestaDTO);
         }
         else{
-            status = 400;
+            status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "No se borro la BD =(", null);
             context.status(status).json(respuestaDTO);
         }
@@ -95,8 +100,55 @@ public class HeladeraController {
             //RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Solicitud exitosa", heladeraDTORta);
             context.status(status).json(heladeraDTORta);
         } catch(NoSuchElementException ex){
-            status = 400;
+            status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        }
+    }
+
+    public void reparar(@NotNull Context context) {
+        var id = context.pathParamAsClass("id", Integer.class).get();
+        var status = 200;
+        try {
+            this.fachada.repararHeladera(id);
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera reparada correctamente", null);
+            context.status(status).json(respuestaDTO);
+
+        } catch (NoSuchElementException ex) {
+            status = 404;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);
+            context.status(status).json(respuestaDTO);
+        }
+    }
+
+    public void suscribirse(@NotNull Context context) {
+        var heladeraId = context.pathParamAsClass("id", Integer.class).get();
+        var suscripcionDTO = context.bodyAsClass(SuscripcionDTO.class);
+        var status = 200;
+        try {
+            this.fachada.agregarSuscriptor(heladeraId, suscripcionDTO);
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera reparada correctamente", null);
+            context.status(status).json(respuestaDTO);
+
+        } catch (NoSuchElementException ex) {
+            status = 404;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);
+            context.status(status).json(respuestaDTO);
+        }
+    }
+
+    public void reportarFalla(@NotNull Context context) {
+        var heladeraId = context.pathParamAsClass("id", Integer.class).get();
+        var alerta = new AlertaDTO(heladeraId, TipoIncidente.FALLA_TECNICA);
+        var status = 200;
+        try {
+            this.fachada.reportarAlerta(alerta);
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Falla reportada exitosamente!", null);
+            context.status(status).json(respuestaDTO);
+
+        } catch (NoSuchElementException ex) {
+            status = 404;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);
             context.status(status).json(respuestaDTO);
         }
     }

@@ -9,6 +9,7 @@ public class MensajeStrategyFactory {
 
     public MensajeStrategyFactory() {
         estrategias.put("temperatura", new SensorTemperaturaStrategy());
+        estrategias.put("fraude", new SensorMovimientoFraudeStrategy());
         estrategias.put("error", new ErrorMensajeStrategy());
     }
 

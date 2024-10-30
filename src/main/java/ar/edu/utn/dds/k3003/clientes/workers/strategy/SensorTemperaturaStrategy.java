@@ -6,6 +6,7 @@ import ar.edu.utn.dds.k3003.model.Temperatura;
 import ar.edu.utn.dds.k3003.repositories.HeladerasRepository;
 import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
 import ar.edu.utn.dds.k3003.utils.MetricsRegistry;
+import ar.edu.utn.dds.k3003.utils.ObjectMapperHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Gauge;
 
@@ -27,7 +28,7 @@ public class SensorTemperaturaStrategy implements MensajeStrategy {
     public SensorTemperaturaStrategy() {
         this.temperaturaRepository = new TemperaturaRepository();
         this.heladerasRepository = new HeladerasRepository();
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = ObjectMapperHelper.createObjectMapper();
     }
 
     @Override
