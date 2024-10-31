@@ -25,6 +25,10 @@ public class Heladera {
     private int capacidadMax;
     @Column
     private LocalDate fechaInicioFuncionamiento;
+
+
+    @Column
+    private LocalDate ultimaConexion;
     @Column
     private boolean activa;
     @Column
@@ -51,6 +55,7 @@ public class Heladera {
         this.cantidadAperturas = 0;
         this.colaboradores = new ArrayList<>();
         this.tipoIncidente = null;
+        this.ultimaConexion=LocalDate.now();
     }
 
     public Heladera() {}
@@ -96,5 +101,8 @@ public class Heladera {
 
     public List<ColaboradorSuscrito> getColaboradoresPorIncidente() {
         return this.colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
+    }
+    public LocalDate getUltimaConexion() {
+        return ultimaConexion;
     }
 }
