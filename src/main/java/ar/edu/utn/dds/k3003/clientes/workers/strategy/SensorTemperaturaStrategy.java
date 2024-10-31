@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Gauge;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,10 +45,12 @@ public class SensorTemperaturaStrategy implements MensajeStrategy {
         // Obtener o registrar la heladera
         Heladera heladera = this.heladerasRepository.findById(heladeraId)
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
+        heladera.setUltimaConexion(LocalDate.now());
 
         // Guardar la temperatura en la base de datos
         Temperatura temperatura = new Temperatura(temperaturaDTO.getTemperatura(), heladera, LocalDateTime.now());
         this.temperaturaRepository.save(temperatura);
+        this.heladerasRepository.update(heladera);
 
         // Actualizar o registrar la métrica para esta heladera
         actualizarMetricaHeladera(heladeraId, temperaturaDTO.getTemperatura());

@@ -193,7 +193,11 @@ public class Fachada implements FachadaHeladeras {
 
         return heladeraMapper.map(heladera);
     }
-
+    public Heladera obtenerHeladeraOrigin(Integer id){
+        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(id))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + id));
+        return heladera;
+    }
     public boolean clean() {
     temperaturaRepository.findAll().forEach(temperaturaRepository::delete);
      heladerasRepository.findAll().forEach(heladerasRepository::delete);
