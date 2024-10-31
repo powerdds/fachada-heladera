@@ -245,7 +245,6 @@ public class Fachada implements FachadaHeladeras {
                 } else {
                     heladeraActiva = false;
                 }
-
             }
             case MAXIMOVIANDAS -> colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
             case MINIMOVIANDAS -> colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
