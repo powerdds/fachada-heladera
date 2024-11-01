@@ -26,19 +26,16 @@ public class MensajeListener extends DefaultConsumer {
         factory.setPassword(env.get("QUEUE_PASSWORD"));
         factory.setVirtualHost(env.get("QUEUE_USERNAME")); // El VHOST suele ser el mismo que el usuario
 
-        String colaSensorTemperaturas = env.get("QUEUE_SENSOR_TEMPERATURA");
-//        String colaPrueba = env.get("QUEUE_PRUEBA");
+//        String colaSensorTemperaturas = env.get("QUEUE_SENSOR_TEMPERATURA");
 
         // Conexión y canal
         Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+        connection.createChannel();
+//        Channel channel = connection.createChannel();
 
-        // Crear una nueva instancia de SensorTemperatura
-        MensajeListener sensorTemperatura = new MensajeListener(channel);
-        sensorTemperatura.iniciarConsumo(colaSensorTemperaturas); // Iniciar el consumo de mensajes
-
-//        MensajeListener prueba = new MensajeListener(channel);
-//        prueba.iniciarConsumo(colaPrueba); // Iniciar el consumo de mensajes
+//        // Crear una nueva instancia de SensorTemperatura
+//        MensajeListener sensorTemperatura = new MensajeListener(channel);
+//        sensorTemperatura.iniciarConsumo(colaSensorTemperaturas); // Iniciar el consumo de mensajes
     }
 
     // Iniciar el consumo de mensajes
