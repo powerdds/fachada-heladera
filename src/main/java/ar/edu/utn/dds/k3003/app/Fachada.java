@@ -212,7 +212,7 @@ public class Fachada implements FachadaHeladeras {
     }
 
     public void repararHeladera(Integer id) {
-        var heladera = this.heladerasRepository.findById(id)
+        var heladera = this.heladerasRepository.findById(Long.valueOf(id))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + id));
 
         heladera.reparar();
@@ -221,7 +221,7 @@ public class Fachada implements FachadaHeladeras {
 
     public void agregarSuscriptor(Integer id, SuscripcionDTO suscripcionDTO) {
 
-     var heladera = this.heladerasRepository.findById(id)
+     var heladera = this.heladerasRepository.findById(Long.valueOf(id))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + id));
 
         this.fachadaColaboradores.buscarXId(Long.valueOf(suscripcionDTO.colaboradorId));
@@ -234,9 +234,9 @@ public class Fachada implements FachadaHeladeras {
         this.heladerasRepository.save(heladera);
     }
 
-    public void reportarAlerta(AlertaDTO alerta) {
+    public Heladera reportarAlerta(AlertaDTO alerta) {
 
-        var heladera = this.heladerasRepository.findById(alerta.getHeladeraId())
+        var heladera = this.heladerasRepository.findById(Long.valueOf(alerta.getHeladeraId()))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + alerta.getHeladeraId()));
 
         List<ColaboradorSuscrito> colaboradores = heladera.getColaboradores();
@@ -262,5 +262,6 @@ public class Fachada implements FachadaHeladeras {
             alerta.setColaboradoresId(colaboradores.stream().map(ColaboradorSuscrito::getColaboradorId).toList());
             this.fachadaColaboradores.reportarAlerta(alerta);
         }
+        return heladera;
     }
 }
