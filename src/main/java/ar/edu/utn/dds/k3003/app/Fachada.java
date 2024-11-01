@@ -9,6 +9,7 @@ import ar.edu.utn.dds.k3003.model.Heladera;
 import ar.edu.utn.dds.k3003.model.Temperatura;
 import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
+import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
 import ar.edu.utn.dds.k3003.repositories.HeladerasRepository;
 import ar.edu.utn.dds.k3003.model.mappers.TemperaturaMapper;
@@ -162,9 +163,19 @@ public class Fachada implements FachadaHeladeras {
         Heladera heladera = this.heladerasRepository.findById(Long.valueOf(temperaturaDTO.getHeladeraId()))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + temperaturaDTO.getHeladeraId()));
 
-        heladera.setUltimaConexion(LocalDate.now());
+        heladera.setUltimaConexion(LocalDateTime.now());
+        var temperaturaMax = heladera.getTemperaturaMax();
+        var temperaturaMin = heladera.getTemperaturaMin();
+        float temperaturaActual = (float) temperaturaDTO.getTemperatura();
 
-        Temperatura temperatura=new Temperatura(temperaturaDTO.getTemperatura(),heladera, LocalDateTime.now());
+        if(temperaturaActual >= temperaturaMax){
+            this.reportarAlerta(new AlertaDTO(Math.toIntExact(heladera.getId()), TipoAlerta.TEMPERATURA_ALTA));
+        }
+        if(temperaturaActual <= temperaturaMin){
+            this.reportarAlerta(new AlertaDTO(Math.toIntExact(heladera.getId()), TipoAlerta.TEMPERATURA_BAJA));
+        }
+
+        Temperatura temperatura = new Temperatura(temperaturaDTO.getTemperatura(),heladera, LocalDateTime.now());
         this.temperaturaRepository.save(temperatura);
     }
 

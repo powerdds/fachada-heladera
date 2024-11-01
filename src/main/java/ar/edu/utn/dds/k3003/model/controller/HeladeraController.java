@@ -143,7 +143,7 @@ public class HeladeraController {
         var status = 200;
         try {
             this.fachada.agregarSuscriptor(heladeraId, suscripcionDTO);
-            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera reparada correctamente", null);
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Colaborador suscrito correctamente" + suscripcionDTO.colaboradorId, suscripcionDTO);
             context.status(status).json(respuestaDTO);
         } catch (NoSuchElementException ex) {
             status = 404;

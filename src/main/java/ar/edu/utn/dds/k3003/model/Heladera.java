@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,10 +25,10 @@ public class Heladera {
     @Column
     private int capacidadMax;
     @Column
-    private LocalDate fechaInicioFuncionamiento;
+    private LocalDateTime fechaInicioFuncionamiento;
 
     @Column
-    private LocalDate ultimaConexion;
+    private LocalDateTime ultimaConexion;
     @Column
     private boolean activa;
     @Column
@@ -47,14 +48,14 @@ public class Heladera {
         this.nombre = nombre;
         this.viandas = 0;
         this.capacidadMax = 20;
-        this.fechaInicioFuncionamiento = LocalDate.now();
+        this.fechaInicioFuncionamiento = LocalDateTime.now();
         this.activa = true;
         this.temperaturaMin = Float.parseFloat(System.getenv().getOrDefault("TEMPERATURA_MIN", "-18"));
         this.temperaturaMax = Float.parseFloat(System.getenv().getOrDefault("TEMPERATURA_MAX", "4"));
         this.cantidadAperturas = 0;
         this.colaboradores = new ArrayList<>();
         this.tipoIncidente = null;
-        this.ultimaConexion=LocalDate.now();
+        this.ultimaConexion=LocalDateTime.now();
     }
 
     public Heladera() {}
