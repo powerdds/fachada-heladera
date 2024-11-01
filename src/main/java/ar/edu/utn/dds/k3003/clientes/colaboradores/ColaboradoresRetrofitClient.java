@@ -10,5 +10,5 @@ public interface ColaboradoresRetrofitClient {
     Call<?> reportarAlerta(@Body AlertaDTO alertaDTO);
 
     @GET("colaboradores/{id}")
-    Call<ColaboradorDTO> getColaborador(@Path("id") Long id);
+    Call<?> getColaborador(@Path("id") Long id);
 }
