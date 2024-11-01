@@ -52,9 +52,9 @@ public class ColaboradoresProxy {
     }
 
     @SneakyThrows
-    public ColaboradorDTO buscarXId(Long aLong) throws NoSuchElementException {
+    public Object buscarXId(Long aLong) throws NoSuchElementException {
 
-        Response<ColaboradorDTO> execute = service.getColaborador(aLong).execute();
+        Response<?> execute = service.getColaborador(aLong).execute();
 
         if (execute.isSuccessful()) {
             return execute.body(); //devuelve un ViandaDTO
