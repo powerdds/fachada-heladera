@@ -30,12 +30,13 @@ public class MensajeListener extends DefaultConsumer {
 
         // Conexión y canal
         Connection connection = factory.newConnection();
-        connection.createChannel();
+        Channel channel = connection.createChannel();
+        System.out.println("Esperando mensajes de la cola de mensajeria...");
 //        Channel channel = connection.createChannel();
 
 //        // Crear una nueva instancia de SensorTemperatura
-//        MensajeListener sensorTemperatura = new MensajeListener(channel);
-//        sensorTemperatura.iniciarConsumo(colaSensorTemperaturas); // Iniciar el consumo de mensajes
+        MensajeListener sensorFraude = new MensajeListener(channel);
+        sensorFraude.iniciarConsumo("Cola Fraude"); // Iniciar el consumo de mensajes
     }
 
     // Iniciar el consumo de mensajes
@@ -69,6 +70,7 @@ public class MensajeListener extends DefaultConsumer {
 
         } catch (Exception e){
             System.err.println("ERROR: No se puede procesar el mensaje debido a que no es un tipo de mensaje permitido...");
+            System.err.println(e.getMessage());
         }
     }
 

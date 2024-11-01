@@ -258,14 +258,22 @@ public class Fachada implements FachadaHeladeras {
             case FALLA_TECNICA, SIN_CONEXION, TEMPERATURA_ALTA, TEMPERATURA_BAJA, MOVIMIENTO -> {
 
                 if(heladera.isActiva()){
-                    colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
+                    colaboradores = colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
                     heladera.falla(alerta.getTipoAlerta());
                 } else {
                     heladeraActiva = false;
                 }
             }
-            case MAXIMOVIANDAS -> colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
-            case MINIMOVIANDAS -> colaboradores.stream().filter(colaboradorSuscrito -> heladera.getViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
+            case MAXIMOVIANDAS -> {
+                colaboradores = colaboradores.stream()
+                        .filter(colaboradorSuscrito -> colaboradorSuscrito.getMaximoViandas() != null)
+                        .filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
+            }
+            case MINIMOVIANDAS ->{
+                colaboradores = colaboradores.stream()
+                        .filter(colaboradorSuscrito -> colaboradorSuscrito.getMinimoViandas() != null)
+                        .filter(colaboradorSuscrito -> heladera.getViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
+            }
             default -> colaboradores.clear();
         }
 
@@ -273,6 +281,6 @@ public class Fachada implements FachadaHeladeras {
             alerta.setColaboradoresId(colaboradores.stream().map(ColaboradorSuscrito::getColaboradorId).toList());
             this.fachadaColaboradores.reportarAlerta(alerta);
         }
-        return heladera;
+        return this.heladerasRepository.update(heladera);
     }
 }

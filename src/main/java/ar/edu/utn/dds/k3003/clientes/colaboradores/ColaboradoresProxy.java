@@ -40,7 +40,7 @@ public class ColaboradoresProxy {
     @SneakyThrows
     public void reportarAlerta(AlertaDTO alertaDTO) throws NoSuchElementException {
 
-        Response<?> execute = service.reportarAlerta(alertaDTO).execute();
+        Response<Void> execute = service.reportarAlerta(alertaDTO).execute();
 
         if (execute.isSuccessful()) {
             System.out.println("Se a enviado el incidente de forma exitosa!");
