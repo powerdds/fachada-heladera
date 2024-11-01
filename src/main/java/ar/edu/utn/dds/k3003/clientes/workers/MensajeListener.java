@@ -1,7 +1,7 @@
 package ar.edu.utn.dds.k3003.clientes.workers;
 
-import ar.edu.utn.dds.k3003.clientes.workers.strategy.MensajeStrategy;
-import ar.edu.utn.dds.k3003.clientes.workers.strategy.MensajeStrategyFactory;
+import ar.edu.utn.dds.k3003.clientes.workers.mensajeTypes.MensajeStrategy;
+import ar.edu.utn.dds.k3003.clientes.workers.mensajeTypes.MensajeFactory;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class MensajeListener extends DefaultConsumer {
 
-    private final MensajeStrategyFactory mensajeStrategyFactory;
+    private final MensajeFactory mensajeStrategyFactory;
 
     private MensajeListener(Channel channel) {
         super(channel);
-        this.mensajeStrategyFactory = new MensajeStrategyFactory();
+        this.mensajeStrategyFactory = new MensajeFactory();
     }
 
     // Inicializa la instancia del SensorTemperatura y la conexión

@@ -26,7 +26,6 @@ public class Heladera {
     @Column
     private LocalDate fechaInicioFuncionamiento;
 
-
     @Column
     private LocalDate ultimaConexion;
     @Column
@@ -97,12 +96,5 @@ public class Heladera {
             colaborador.get().setMinimoViandas(colaboradorSuscrito.getMinimoViandas());
             colaborador.get().setReportarIncidente(colaboradorSuscrito.getReportarIncidente());
         }
-    }
-
-    public List<ColaboradorSuscrito> getColaboradoresPorIncidente() {
-        return this.colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
-    }
-    public LocalDate getUltimaConexion() {
-        return ultimaConexion;
     }
 }

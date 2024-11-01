@@ -16,6 +16,7 @@ import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
 import ar.edu.utn.dds.k3003.utils.MetricsRegistry;
 import io.micrometer.core.instrument.Gauge;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -160,6 +161,8 @@ public class Fachada implements FachadaHeladeras {
     @Override public void temperatura(TemperaturaDTO temperaturaDTO){
         Heladera heladera = this.heladerasRepository.findById(Long.valueOf(temperaturaDTO.getHeladeraId()))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + temperaturaDTO.getHeladeraId()));
+
+        heladera.setUltimaConexion(LocalDate.now());
 
         Temperatura temperatura=new Temperatura(temperaturaDTO.getTemperatura(),heladera, LocalDateTime.now());
         this.temperaturaRepository.save(temperatura);
