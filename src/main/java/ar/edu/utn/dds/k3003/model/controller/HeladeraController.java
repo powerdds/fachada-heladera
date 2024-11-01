@@ -172,7 +172,8 @@ public class HeladeraController {
             context.status(status).json(respuestaDTO);
         } catch(Exception ex){
             status = 500;
-            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            System.out.println(ex);
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
     }

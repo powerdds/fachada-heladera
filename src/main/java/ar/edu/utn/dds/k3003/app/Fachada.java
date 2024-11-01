@@ -216,7 +216,7 @@ public class Fachada implements FachadaHeladeras {
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + id));
 
         heladera.reparar();
-        this.heladerasRepository.save(heladera);
+        this.heladerasRepository.update(heladera);
     }
 
     public void agregarSuscriptor(Integer id, SuscripcionDTO suscripcionDTO) {
@@ -231,7 +231,7 @@ public class Fachada implements FachadaHeladeras {
 
         heladera.agregarSuscriptor(colaboradorSuscrito);
 
-        this.heladerasRepository.save(heladera);
+        this.heladerasRepository.update(heladera);
     }
 
     public Heladera reportarAlerta(AlertaDTO alerta) {

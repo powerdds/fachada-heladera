@@ -39,7 +39,7 @@ public class Heladera {
     @Column(name = "Tipo_falla")
     private TipoAlerta tipoIncidente;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "heladera_id")
     private List<ColaboradorSuscrito> colaboradores;
 
