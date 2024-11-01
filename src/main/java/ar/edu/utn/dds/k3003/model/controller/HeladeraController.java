@@ -32,6 +32,10 @@ public class HeladeraController {
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
         }
     }
 
@@ -47,6 +51,10 @@ public class HeladeraController {
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);
             context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
         }
     }
     public void depositar(Context context) {
@@ -56,9 +64,13 @@ public class HeladeraController {
             this.fachada.depositar(vianda.getHeladeraId(), vianda.getCodigoQR());
             RespuestaDTO respuestaDTO = new RespuestaDTO(200, "Vianda depositada correctamente", null);
             context.status(200).json(respuestaDTO);
-        } catch (Exception ex){
+        } catch (NoSuchElementException ex){
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        } catch (Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: " + ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
     }
@@ -102,6 +114,10 @@ public class HeladeraController {
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
         }
     }
 
@@ -117,6 +133,10 @@ public class HeladeraController {
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);
             context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
         }
     }
 
@@ -128,10 +148,13 @@ public class HeladeraController {
             this.fachada.agregarSuscriptor(heladeraId, suscripcionDTO);
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera reparada correctamente", null);
             context.status(status).json(respuestaDTO);
-
         } catch (NoSuchElementException ex) {
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);
+            context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
     }
@@ -148,6 +171,10 @@ public class HeladeraController {
         } catch (NoSuchElementException ex) {
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera no encontrada", null);
+            context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
     }

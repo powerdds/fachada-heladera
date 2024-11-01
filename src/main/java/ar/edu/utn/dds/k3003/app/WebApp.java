@@ -43,7 +43,7 @@ public class WebApp {
         // Definir las rutas
         definirRutas(app);
 
-        heladerasJob();
+        //heladerasJob();
     }
 
     private static void heladerasJob() {
