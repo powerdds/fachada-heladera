@@ -6,6 +6,7 @@ import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.TimerTask;
 
 public class MyJob extends TimerTask {
@@ -17,6 +18,7 @@ public class MyJob extends TimerTask {
 
     @Override
     public void run() {
+        System.out.println("Job ejecutandose a las " + LocalDateTime.now());
         var heladeras=fachada.obtenerHeladeras();
         heladeras.forEach(
                 heladeraDTO -> {
