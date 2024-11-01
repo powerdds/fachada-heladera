@@ -163,7 +163,7 @@ public class HeladeraController {
         try {
             var heladera = this.fachada.reportarAlerta(alerta);
             var heladeraFallaDTO = new HeladeraFallaDTO(Math.toIntExact(heladera.getId()), heladera.getNombre(), heladera.getTipoIncidente());
-            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Falla reportada exitosamente!", null);
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Falla reportada exitosamente!", heladeraFallaDTO);
             context.status(status).json(respuestaDTO);
 
         } catch (NoSuchElementException ex) {
