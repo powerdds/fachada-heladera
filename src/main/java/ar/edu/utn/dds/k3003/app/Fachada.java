@@ -149,7 +149,7 @@ public class Fachada implements FachadaHeladeras {
        
         try {
             heladera.retirarVianda();
-            fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.RETIRADA);
+            fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.EN_TRASLADO);
             fachadaViandas.modificarHeladera(vianda.getCodigoQR(),-1);
             this.heladerasRepository.update(heladera);
             actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
