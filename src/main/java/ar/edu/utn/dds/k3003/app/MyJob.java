@@ -22,6 +22,7 @@ public class MyJob {
         Timer timer = new Timer();
         // Programar la tarea para que se ejecute cada hora (3600000 milisegundos)
         timer.schedule(new TimerTask() {
+
             @Override
             public void run() {
                 // Aquí va la acción que quieres realizar cada hora
