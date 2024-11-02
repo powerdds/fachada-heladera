@@ -17,7 +17,7 @@ public class WebApp {//es el job////////////////////////
     private static Fachada fachada= FachadaHelper.crearFachada();
 
     public static void main(String[] args) {
-        Javalin app = iniciarApiJavalin();
+        //Javalin app = iniciarApiJavalin();
         // Crear un Timer para programar la tarea
         Timer timer = new Timer();
         // Programar la tarea para que se ejecute cada hora (3600000 milisegundos)
@@ -46,7 +46,7 @@ public class WebApp {//es el job////////////////////////
                         }
                 );
             }
-        }, 0, 10000); // 0: inicio inmediato, 3600000 ms: intervalo de una hora
+        }, 0, 60000); // 0: inicio inmediato, 3600000 ms: intervalo de una hora
     }
     private static Javalin iniciarApiJavalin() {
 
