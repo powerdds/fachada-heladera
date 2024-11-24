@@ -134,6 +134,12 @@
       <artifactId>micrometer-registry-prometheus</artifactId>
       <version>${micrometer.version}</version>
     </dependency>
+    <!-- bot Telegram -->
+    <dependency>
+      <groupId>org.telegram</groupId>
+      <artifactId>telegrambots</artifactId>
+      <version>6.5.0</version>
+    </dependency>
   </dependencies>
 
   <repositories>
