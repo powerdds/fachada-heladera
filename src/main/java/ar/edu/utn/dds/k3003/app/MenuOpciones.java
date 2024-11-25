@@ -219,8 +219,11 @@ public class MenuOpciones extends botState {
                 bot.execute(sendMessage);
             }
             case "2" -> {
-                sendMessage.setText("seleccionaste la opcion 2");
+                sendMessage.setText("seleccionaste la opcion ''Cambiar forma de colaborar'' \n");
+                this.subState=SubState.START;
                 bot.execute(sendMessage);
+                elegirFormaDeColaborar(userChat,bot);
+
             }
             case "3" -> {
                 sendMessage.setText("seleccionaste la opcion 3");
@@ -253,7 +256,9 @@ public class MenuOpciones extends botState {
             }
             case "2" -> {
                 sendMessage.setText("seleccionaste la opcion 2");
+                this.subState=SubState.START;
                 bot.execute(sendMessage);
+                elegirFormaDeColaborar(userChat,bot);
             }
             case "3" -> {
                 sendMessage.setText("seleccionaste la opcion 3");
@@ -286,7 +291,9 @@ public class MenuOpciones extends botState {
             }
             case "2" -> {
                 sendMessage.setText("seleccionaste la opcion 2");
+                this.subState=SubState.START;
                 bot.execute(sendMessage);
+                elegirFormaDeColaborar(userChat,bot);
             }
             case "3" -> {
                 sendMessage.setText("seleccionaste la opcion 3");
@@ -319,7 +326,9 @@ public class MenuOpciones extends botState {
             }
             case "2" -> {
                 sendMessage.setText("seleccionaste la opcion 2");
+                this.subState=SubState.START;
                 bot.execute(sendMessage);
+                elegirFormaDeColaborar(userChat,bot);
             }
             case "3" -> {
                 sendMessage.setText("seleccionaste la opcion 3");
