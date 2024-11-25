@@ -19,14 +19,21 @@ public class bot extends TelegramLongPollingBot{
 // Se obtiene el id de chat del usuario
         Long chatId = update.getMessage().getChatId();
 // Se crea un objeto mensaje
-        // SendMessage message = new SendMessage();
-        // message.setChatId(chatId.toString());
+       // SendMessage message = new SendMessage();
+       // message.setChatId(chatId.toString());
         menu.setSubState(SubState.START);
         try {
-            menu.execute(chatId, messageTextReceived, this);
+            menu.execute(chatId,messageTextReceived,this);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        //   message.setText(messageTextReceived);
+       // try {
+// Se envía el mensaje
+     //       execute(message);
+     //   } catch (TelegramApiException e) {
+    //        e.printStackTrace();
+    //    }
     }
 
     @Override
@@ -37,6 +44,7 @@ public class bot extends TelegramLongPollingBot{
     public String getBotToken() {
         return System.getenv("TOKEN_BOT");
     }
+
     public static void main(String[] args)
             throws TelegramApiException {
 // Se crea un nuevo Bot API
@@ -48,7 +56,6 @@ public class bot extends TelegramLongPollingBot{
             e.printStackTrace();
         }
     }
-
 
 
 
