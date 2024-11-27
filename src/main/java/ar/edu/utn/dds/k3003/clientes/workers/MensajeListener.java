@@ -1,7 +1,7 @@
 package ar.edu.utn.dds.k3003.clientes.workers;
 
-import ar.edu.utn.dds.k3003.clientes.workers.strategy.MensajeStrategy;
-import ar.edu.utn.dds.k3003.clientes.workers.strategy.MensajeStrategyFactory;
+import ar.edu.utn.dds.k3003.clientes.workers.mensajeTypes.MensajeStrategy;
+import ar.edu.utn.dds.k3003.clientes.workers.mensajeTypes.MensajeFactory;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class MensajeListener extends DefaultConsumer {
 
-    private final MensajeStrategyFactory mensajeStrategyFactory;
+    private final MensajeFactory mensajeStrategyFactory;
 
     private MensajeListener(Channel channel) {
         super(channel);
-        this.mensajeStrategyFactory = new MensajeStrategyFactory();
+        this.mensajeStrategyFactory = new MensajeFactory();
     }
 
     // Inicializa la instancia del SensorTemperatura y la conexión
@@ -26,19 +26,17 @@ public class MensajeListener extends DefaultConsumer {
         factory.setPassword(env.get("QUEUE_PASSWORD"));
         factory.setVirtualHost(env.get("QUEUE_USERNAME")); // El VHOST suele ser el mismo que el usuario
 
-        String colaSensorTemperaturas = env.get("QUEUE_SENSOR_TEMPERATURA");
-//        String colaPrueba = env.get("QUEUE_PRUEBA");
+//        String colaSensorTemperaturas = env.get("QUEUE_SENSOR_TEMPERATURA");
 
         // Conexión y canal
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
+        System.out.println("Esperando mensajes de la cola de mensajeria...");
+//        Channel channel = connection.createChannel();
 
-        // Crear una nueva instancia de SensorTemperatura
-        MensajeListener sensorTemperatura = new MensajeListener(channel);
-        sensorTemperatura.iniciarConsumo(colaSensorTemperaturas); // Iniciar el consumo de mensajes
-
-//        MensajeListener prueba = new MensajeListener(channel);
-//        prueba.iniciarConsumo(colaPrueba); // Iniciar el consumo de mensajes
+//        // Crear una nueva instancia de SensorTemperatura
+        MensajeListener sensorFraude = new MensajeListener(channel);
+        sensorFraude.iniciarConsumo("Cola Fraude"); // Iniciar el consumo de mensajes
     }
 
     // Iniciar el consumo de mensajes
@@ -72,6 +70,7 @@ public class MensajeListener extends DefaultConsumer {
 
         } catch (Exception e){
             System.err.println("ERROR: No se puede procesar el mensaje debido a que no es un tipo de mensaje permitido...");
+            System.err.println(e.getMessage());
         }
     }
 

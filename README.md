@@ -10,11 +10,13 @@ javax.persistence.jdbc.user -> usuario\
 javax.persistence.jdbc.password -> contraseña\
 javax.persistence.jdbc.driver -> driver de la base de datos
 
-hibernate.hbm2ddl.auto\
-hibernate.connection.pool_size\
-hibernate.show_sql
-
 QUEUE_HOST -> cluster RabitCloudAMQP\
 QUEUE_USERNAME -> usuario y Vhost RabitCloudAMQP\
 QUEUE_PASSWORD -> contraseña RabitCloudAMQP\
-QUEUE_NAME -> nombre de la instancia RabitCloudAMQP
+QUEUE_SENSOR_TEMPERATURA -> Temperatura\
+QUEUE_SENSOR_INCIDENTE -> Incidente\
+
+TOKEN -> token para el Grafana
+
+URL_COLABORADORES -> Url colaboradores\
+URL_VIANDAS -> Url viandas

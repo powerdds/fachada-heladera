@@ -2,6 +2,7 @@ package ar.edu.utn.dds.k3003.model.controller;
 
 import ar.edu.utn.dds.k3003.app.Fachada;
 import ar.edu.utn.dds.k3003.facades.dtos.TemperaturaDTO;
+import ar.edu.utn.dds.k3003.model.controller.dtos.RespuestaDTO;
 import io.javalin.http.Context;
 
 import java.util.NoSuchElementException;

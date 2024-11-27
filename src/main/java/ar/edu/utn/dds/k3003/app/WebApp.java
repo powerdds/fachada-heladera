@@ -1,24 +1,22 @@
 package ar.edu.utn.dds.k3003.app;
 
-import ar.edu.utn.dds.k3003.clientes.ViandasProxy;
+import ar.edu.utn.dds.k3003.clientes.colaboradores.ColaboradoresProxy;
+import ar.edu.utn.dds.k3003.clientes.viandas.ViandasProxy;
+
+import ar.edu.utn.dds.k3003.model.MyJob;
 import ar.edu.utn.dds.k3003.model.controller.HeladeraController;
 import ar.edu.utn.dds.k3003.model.controller.MetricsController;
 import ar.edu.utn.dds.k3003.model.controller.TemperaturaController;
-import ar.edu.utn.dds.k3003.facades.dtos.Constants;
 import ar.edu.utn.dds.k3003.clientes.workers.MensajeListener;
 import ar.edu.utn.dds.k3003.utils.MetricsRegistry;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import ar.edu.utn.dds.k3003.utils.ObjectMapperHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
 import io.javalin.micrometer.MicrometerPlugin;
 import io.micrometer.core.instrument.binder.jvm.*;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.Timer;
 
 public class WebApp {
 
@@ -28,7 +26,7 @@ public class WebApp {
     private static final MetricsController metricsController;
 
     static {
-        fachada = crearFachada(createObjectMapper());
+        fachada = crearFachada(ObjectMapperHelper.createObjectMapper());
         heladeraController = new HeladeraController(fachada);
         temperaturaController = new TemperaturaController(fachada);
         metricsController = new MetricsController();
@@ -37,14 +35,26 @@ public class WebApp {
     public static void main(String[] args) {
 
         // Iniciar el worker en un hilo separado
-        iniciarWorkerSensorTemperaturas();
+        iniciarColaMensajeria();
 
         // Iniciar la API
         Javalin app = iniciarApiJavalin();
 
         // Definir las rutas
         definirRutas(app);
+
+        //heladerasJob();
     }
+
+    private static void heladerasJob() {
+        System.out.println("Inicando el JOB");
+        Timer t = new Timer();
+        MyJob myJob = new MyJob(fachada);
+        // This task is scheduled to run every 10 seconds
+
+        t.scheduleAtFixedRate(myJob, 0, 10000000);
+    }
+
 
     private static void definirRutas(Javalin app) {
 
@@ -53,6 +63,9 @@ public class WebApp {
         app.get("/heladeras/{id}", heladeraController::obtener);
         app.post("/temperaturas", temperaturaController::agregar);
         app.get("/heladeras/{id}/temperaturas", temperaturaController::obtener);
+        app.post("/heladeras/{id}/suscribir", heladeraController::suscribirse);
+        app.post("/heladeras/{id}/falla", heladeraController::reportarFalla);
+        app.patch("/heladeras/{id}/reparar", heladeraController::reparar);
         app.post("/depositos", heladeraController::depositar);
         app.post("/retiros", heladeraController::retirar);
         app.get("/cleanup", heladeraController::cleanup);
@@ -62,7 +75,7 @@ public class WebApp {
     }
 
     // Iniciar el worker de RabbitMQ
-    private static void iniciarWorkerSensorTemperaturas() {
+    private static void iniciarColaMensajeria() {
         Thread workerThread = new Thread(() -> {
             try {
                 MensajeListener.iniciar(); // Inicia el worker de RabbitMQ
@@ -77,6 +90,7 @@ public class WebApp {
     private static Fachada crearFachada(ObjectMapper objectMapper) {
         var fachada = new Fachada();
         fachada.setViandasProxy(new ViandasProxy(objectMapper)); // Usar ViandasProxy para pruebas locales
+        fachada.setColaboradoresProxy(new ColaboradoresProxy(objectMapper));
         return fachada;
     }
 
@@ -108,20 +122,5 @@ public class WebApp {
         return Javalin.create(config -> config.registerPlugin(micrometerPlugin)).start();
     }
 
-    // Configurar el ObjectMapper
-    public static ObjectMapper createObjectMapper() {
-        var objectMapper = new ObjectMapper();
-        configureObjectMapper(objectMapper);
-        return objectMapper;
-    }
-
-    public static void configureObjectMapper(ObjectMapper objectMapper) {
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        var sdf = new SimpleDateFormat(Constants.DEFAULT_SERIALIZATION_FORMAT, Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        objectMapper.setDateFormat(sdf);
-    }
 
 }

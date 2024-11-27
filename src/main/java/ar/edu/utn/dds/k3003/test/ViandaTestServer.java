@@ -3,14 +3,13 @@ package ar.edu.utn.dds.k3003.test;
 import ar.edu.utn.dds.k3003.facades.dtos.EstadoViandaEnum;
 import ar.edu.utn.dds.k3003.facades.dtos.TrasladoDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.ViandaDTO;
+import ar.edu.utn.dds.k3003.utils.ObjectMapperHelper;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.json.JavalinJackson;
 
 import java.time.LocalDateTime;
-
-import static ar.edu.utn.dds.k3003.app.WebApp.configureObjectMapper;
 
 public class ViandaTestServer {
 
@@ -21,9 +20,7 @@ public class ViandaTestServer {
         var port = Integer.parseInt(env.getOrDefault("PORT", "8081"));
 
         var app = Javalin.create(config -> {
-            config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
-                configureObjectMapper(mapper);
-            }));
+            config.jsonMapper(new JavalinJackson().updateMapper(ObjectMapperHelper::configureObjectMapper));
         }).start(port);
 
         app.get("/viandas/{qr}", ViandaTestServer::obtenerVianda);
