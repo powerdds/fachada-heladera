@@ -298,4 +298,12 @@ public class Fachada implements FachadaHeladeras {
         }
         return this.heladerasRepository.update(heladera);
     }
+
+    public List<Alerta> obtenerAlertas(Integer heladeraId) {
+
+        var heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
+
+        return this.alertaRepository.findAllById(heladera.getId());
+    }
 }

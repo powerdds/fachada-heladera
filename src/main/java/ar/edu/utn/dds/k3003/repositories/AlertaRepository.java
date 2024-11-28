@@ -19,13 +19,11 @@ public class AlertaRepository extends Repository <Alerta> {
     public List<Alerta> findAllById(Long idHeladera) {
         EntityManager em = EntityManagerHelper.getEntityManager();
         try {
-            List<Alerta> listaAlertas = em.createQuery("from alerta where heladera_id="+idHeladera, Alerta.class).getResultList();
+            List<Alerta> listaAlertas = em.createQuery("from Alerta where heladera_id="+idHeladera, Alerta.class).getResultList();
               return listaAlertas;
         } finally {
             EntityManagerHelper.closeEntityManager();
         }
     }
-
-
 
 }
