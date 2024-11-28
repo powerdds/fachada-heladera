@@ -8,6 +8,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd" version="2.2">
     <class>ar.edu.utn.dds.k3003.model.Heladera</class>
     <class>ar.edu.utn.dds.k3003.model.Temperatura</class>
     <class>ar.edu.utn.dds.k3003.model.ColaboradorSuscrito</class>
+    <class>ar.edu.utn.dds.k3003.model.Alerta</class>
 
     <properties>
         <property name="hibernate.hbm2ddl.auto" value="update"/>

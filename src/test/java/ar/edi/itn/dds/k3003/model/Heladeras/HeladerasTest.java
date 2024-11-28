@@ -4,7 +4,7 @@ import ar.edu.utn.dds.k3003.app.Fachada;
 import ar.edu.utn.dds.k3003.facades.FachadaViandas;
 import ar.edu.utn.dds.k3003.facades.dtos.*;
 import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
-import ar.edu.utn.dds.k3003.repositories.HeladerasRepository;
+import ar.edu.utn.dds.k3003.repositories.HeladeraRepository;
 import ar.edu.utn.dds.k3003.model.mappers.TemperaturaMapper;
 import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,15 +23,15 @@ import static org.mockito.Mockito.description;
 public class HeladerasTest {
 
     Fachada instancia;
-    HeladerasRepository repo;
+    HeladeraRepository repo;
     TemperaturaRepository repoT;
 
     @Mock
     FachadaViandas fachadaViandas;
     private void initializeHeladerasTest(){
-        repo=new HeladerasRepository();
+        repo=new HeladeraRepository();
         repoT=new TemperaturaRepository();
-        instancia=new Fachada(repo,new HeladeraMapper(),repoT,new TemperaturaMapper());
+        instancia=new Fachada(repo,new HeladeraMapper(),repoT,new TemperaturaMapper(), null);
         instancia.setViandasProxy(fachadaViandas);
     }
     @BeforeEach

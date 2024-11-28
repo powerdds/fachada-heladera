@@ -43,18 +43,7 @@ public class WebApp {
         // Definir las rutas
         definirRutas(app);
 
-        //heladerasJob();
     }
-
-    private static void heladerasJob() {
-        System.out.println("Inicando el JOB");
-        Timer t = new Timer();
-        MyJob myJob = new MyJob(fachada);
-        // This task is scheduled to run every 10 seconds
-
-        t.scheduleAtFixedRate(myJob, 0, 10000000);
-    }
-
 
     private static void definirRutas(Javalin app) {
 

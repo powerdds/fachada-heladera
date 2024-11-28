@@ -4,6 +4,7 @@ import ar.edu.utn.dds.k3003.clientes.colaboradores.ColaboradoresProxy;
 import ar.edu.utn.dds.k3003.facades.FachadaHeladeras;
 import ar.edu.utn.dds.k3003.facades.FachadaViandas;
 import ar.edu.utn.dds.k3003.facades.dtos.*;
+import ar.edu.utn.dds.k3003.model.Alerta;
 import ar.edu.utn.dds.k3003.model.ColaboradorSuscrito;
 import ar.edu.utn.dds.k3003.model.Heladera;
 import ar.edu.utn.dds.k3003.model.Temperatura;
@@ -11,13 +12,13 @@ import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
-import ar.edu.utn.dds.k3003.repositories.HeladerasRepository;
+import ar.edu.utn.dds.k3003.repositories.AlertaRepository;
+import ar.edu.utn.dds.k3003.repositories.HeladeraRepository;
 import ar.edu.utn.dds.k3003.model.mappers.TemperaturaMapper;
 import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
 import ar.edu.utn.dds.k3003.utils.MetricsRegistry;
 import io.micrometer.core.instrument.Gauge;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,10 +27,14 @@ import java.util.stream.Collectors;
 
 public class Fachada implements FachadaHeladeras {
 
- private final HeladerasRepository heladerasRepository;
+ private final HeladeraRepository heladerasRepository;
  private final HeladeraMapper heladeraMapper;
+
  private final TemperaturaRepository temperaturaRepository;
  private final TemperaturaMapper temperaturaMapper;
+
+ private final AlertaRepository alertaRepository;
+
  private FachadaViandas fachadaViandas;
  private ColaboradoresProxy fachadaColaboradores;
 
@@ -38,10 +43,11 @@ public class Fachada implements FachadaHeladeras {
  private ConcurrentHashMap<Long, AtomicReference<Integer>> aperturasPorHeladeras;
 
  public Fachada() {
-  this.heladerasRepository = new HeladerasRepository();
+  this.heladerasRepository = new HeladeraRepository();
   this.heladeraMapper = new HeladeraMapper();
   this.temperaturaRepository= new TemperaturaRepository();
   this.temperaturaMapper = new TemperaturaMapper();
+  this.alertaRepository = new AlertaRepository();
   inicializarCantidadViandasPorHeladeras();
   inicializarCantidadAperturasxHeladera();
  }
@@ -99,11 +105,14 @@ public class Fachada implements FachadaHeladeras {
         }).set(cantidadViandas);  // Actualizamos la temperatura si ya existe
     }
 
-    public Fachada(HeladerasRepository heladerasRepository, HeladeraMapper heladeraMapper, TemperaturaRepository temperaturaRepository, TemperaturaMapper temperaturaMapper) {
+    public Fachada(HeladeraRepository heladerasRepository, HeladeraMapper heladeraMapper,
+                   TemperaturaRepository temperaturaRepository, TemperaturaMapper temperaturaMapper,
+                   AlertaRepository alertaRepository) {
         this.heladerasRepository = heladerasRepository;
         this.heladeraMapper = heladeraMapper;
         this.temperaturaRepository = temperaturaRepository;
         this.temperaturaMapper = temperaturaMapper;
+        this.alertaRepository = alertaRepository;
     }
 
     @Override public HeladeraDTO agregar(HeladeraDTO heladeraDTO){
@@ -136,20 +145,21 @@ public class Fachada implements FachadaHeladeras {
  }
 
     @Override public void retirar(RetiroDTO retiro) throws NoSuchElementException{
-        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(retiro.getHeladeraId()))
+
+     Heladera heladera = this.heladerasRepository.findById(Long.valueOf(retiro.getHeladeraId()))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + retiro.getHeladeraId()));
         ViandaDTO vianda = this.fachadaViandas.buscarXQR(retiro.getQrVianda());
 
         if(vianda.getEstado()!=EstadoViandaEnum.DEPOSITADA){
-            throw new RuntimeException("La Vianda "+retiro.getQrVianda()+ " no esta depositada, no se puede retirar");
+            throw new RuntimeException("La Vianda " + retiro.getQrVianda() + " no esta depositada, no se puede retirar");
         }
         if(!Objects.equals(vianda.getHeladeraId(), retiro.getHeladeraId())){//la heladera de la que se quiere retirar la vianda es la heladera en la que realmente esta la vianda
-            throw new RuntimeException("La Vianda "+retiro.getQrVianda()+ " no esta depositada en esta heladera "+retiro.getHeladeraId());
+            throw new RuntimeException("La Vianda " + retiro.getQrVianda() + " no esta depositada en esta heladera " + retiro.getHeladeraId());
         }
        
         try {
             heladera.retirarVianda();
-            fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.EN_TRASLADO);
+            fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.RETIRADA);
             fachadaViandas.modificarHeladera(vianda.getCodigoQR(),-1);
             this.heladerasRepository.update(heladera);
             actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
@@ -245,21 +255,26 @@ public class Fachada implements FachadaHeladeras {
         this.heladerasRepository.update(heladera);
     }
 
-    public Heladera reportarAlerta(AlertaDTO alerta) {
+    public Heladera reportarAlerta(AlertaDTO alertaDTO) {
 
-        var heladera = this.heladerasRepository.findById(Long.valueOf(alerta.getHeladeraId()))
-                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + alerta.getHeladeraId()));
+
+        var heladera = this.heladerasRepository.findById(Long.valueOf(alertaDTO.getHeladeraId()))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + alertaDTO.getHeladeraId()));
+
+        var alerta = new Alerta(heladera, alertaDTO.getTipoAlerta());
+
+        this.alertaRepository.save(alerta);
 
         List<ColaboradorSuscrito> colaboradores = heladera.getColaboradores();
 
         boolean heladeraActiva = true;
 
-        switch (alerta.getTipoAlerta()){
+        switch (alertaDTO.getTipoAlerta()){
             case FALLA_TECNICA, SIN_CONEXION, TEMPERATURA_ALTA, TEMPERATURA_BAJA, MOVIMIENTO -> {
 
                 if(heladera.isActiva()){
                     colaboradores = colaboradores.stream().filter(ColaboradorSuscrito::getReportarIncidente).toList();
-                    heladera.falla(alerta.getTipoAlerta());
+                    heladera.falla(alertaDTO.getTipoAlerta());
                 } else {
                     heladeraActiva = false;
                 }
@@ -278,8 +293,8 @@ public class Fachada implements FachadaHeladeras {
         }
 
         if(!colaboradores.isEmpty() && heladeraActiva){
-            alerta.setColaboradoresId(colaboradores.stream().map(ColaboradorSuscrito::getColaboradorId).toList());
-            this.fachadaColaboradores.reportarAlerta(alerta);
+            alertaDTO.setColaboradoresId(colaboradores.stream().map(ColaboradorSuscrito::getColaboradorId).toList());
+            this.fachadaColaboradores.reportarAlerta(alertaDTO);
         }
         return this.heladerasRepository.update(heladera);
     }
