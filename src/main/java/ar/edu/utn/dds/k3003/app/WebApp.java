@@ -53,6 +53,7 @@ public class WebApp {
         app.post("/temperaturas", temperaturaController::agregar);
         app.get("/heladeras/{id}/temperaturas", temperaturaController::obtener);
         app.post("/heladeras/{id}/suscribir", heladeraController::suscribirse);
+        app.delete("/heladeras/{heladera_id}/suscribir/{colaborador_id}", heladeraController::desuscribirse);
         app.post("/heladeras/{id}/falla", heladeraController::reportarFalla);
         app.patch("/heladeras/{id}/reparar", heladeraController::reparar);
         app.patch("/heladeras/{id}/alertas", heladeraController::getAlertas);

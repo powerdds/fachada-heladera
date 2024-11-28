@@ -4,12 +4,8 @@ import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 @Entity
@@ -96,6 +92,19 @@ public class Heladera {
             colaborador.get().setMaximoViandas(colaboradorSuscrito.getMaximoViandas());
             colaborador.get().setMinimoViandas(colaboradorSuscrito.getMinimoViandas());
             colaborador.get().setReportarIncidente(colaboradorSuscrito.getReportarIncidente());
+        }
+    }
+
+    public void eliminarColaborador(Integer colaboradorId) {
+
+        Optional<ColaboradorSuscrito> colaboradorAEliminar = this.getColaboradores().stream()
+                .filter(colaborador -> Objects.equals(colaborador.getColaboradorId(), colaboradorId))
+                .findFirst();
+
+        if (colaboradorAEliminar.isPresent()) {
+            this.getColaboradores().remove(colaboradorAEliminar.get());
+        } else {
+            throw new NoSuchElementException("No se encontró el colaborador con id: " + colaboradorId + " en la heladera " + this.getId());
         }
     }
 }

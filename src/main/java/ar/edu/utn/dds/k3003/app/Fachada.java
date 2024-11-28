@@ -306,4 +306,14 @@ public class Fachada implements FachadaHeladeras {
 
         return this.alertaRepository.findAllById(heladera.getId());
     }
+
+    public void eliminarSuscriptor(Integer heladeraId, Integer colaboradorId) {
+
+        var heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
+
+        heladera.eliminarColaborador(colaboradorId);
+
+        this.heladerasRepository.update(heladera);
+    }
 }

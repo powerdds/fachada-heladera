@@ -156,6 +156,25 @@ public class HeladeraController {
         }
     }
 
+    public void desuscribirse(@NotNull Context context) {
+        var heladeraId = context.pathParamAsClass("heladera_id", Integer.class).get();
+        var colaboradorId = context.pathParamAsClass("colaborador_id", Integer.class).get();
+        var status = 200;
+        try {
+            this.fachada.eliminarSuscriptor(heladeraId, colaboradorId);
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Colaborador " + colaboradorId + " se a desuscrito correctamente a la heladera" + heladeraId, null);
+            context.status(status).json(respuestaDTO);
+        } catch (NoSuchElementException ex) {
+            status = 404;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        }
+    }
+
     public void reportarFalla(@NotNull Context context) {
         var heladeraId = context.pathParamAsClass("id", Integer.class).get();
         var alerta = new AlertaDTO(heladeraId, TipoAlerta.FALLA_TECNICA);
