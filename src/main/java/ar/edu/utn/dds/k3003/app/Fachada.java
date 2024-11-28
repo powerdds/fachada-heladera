@@ -9,6 +9,7 @@ import ar.edu.utn.dds.k3003.model.ColaboradorSuscrito;
 import ar.edu.utn.dds.k3003.model.Heladera;
 import ar.edu.utn.dds.k3003.model.Temperatura;
 import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
+import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaHeladeraDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
@@ -299,12 +300,14 @@ public class Fachada implements FachadaHeladeras {
         return this.heladerasRepository.update(heladera);
     }
 
-    public List<Alerta> obtenerAlertas(Integer heladeraId) {
+    public AlertaHeladeraDTO obtenerAlertas(Integer heladeraId) {
 
         var heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
 
-        return this.alertaRepository.findAllById(heladera.getId());
+        var registros = this.alertaRepository.findAllById(heladera.getId()).stream().map(Alerta::mapRegistro).toList();
+
+        return new AlertaHeladeraDTO(Math.toIntExact(heladera.getId()), registros);
     }
 
     public void eliminarSuscriptor(Integer heladeraId, Integer colaboradorId) {
