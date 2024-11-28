@@ -233,11 +233,14 @@ public class Fachada implements FachadaHeladeras {
         return heladeraMapper.originToListDTO(this.heladerasRepository.findAll());
     }
 
-    public void repararHeladera(Integer id) {
-        var heladera = this.heladerasRepository.findById(Long.valueOf(id))
-                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + id));
+    public void repararHeladera(AlertaDTO alertaDTO) {
+        var heladera = this.heladerasRepository.findById(Long.valueOf(alertaDTO.getHeladeraId()))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + alertaDTO.getHeladeraId()));
 
+        var alerta = new Alerta(heladera, alertaDTO.getTipoAlerta());
+        this.alertaRepository.save(alerta);
         heladera.reparar();
+
         this.heladerasRepository.update(heladera);
     }
 

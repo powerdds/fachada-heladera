@@ -120,9 +120,10 @@ public class HeladeraController {
 
     public void reparar(@NotNull Context context) {
         var id = context.pathParamAsClass("id", Integer.class).get();
+        var alerta = new AlertaDTO(id, TipoAlerta.REPARADA);
         var status = 200;
         try {
-            this.fachada.repararHeladera(id);
+            this.fachada.repararHeladera(alerta);
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Heladera reparada correctamente", null);
             context.status(status).json(respuestaDTO);
 

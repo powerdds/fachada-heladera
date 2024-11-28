@@ -7,5 +7,6 @@ public enum TipoAlerta {
     SIN_CONEXION, // Se saca del job
     MAXIMOVIANDAS, // Se saca del job
     MINIMOVIANDAS, // Se saca del job
-    FALLA_TECNICA // Me llega por endPoint
+    FALLA_TECNICA, // Me llega por endPoint
+    REPARADA
 }
