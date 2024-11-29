@@ -332,7 +332,10 @@ public class Fachada implements FachadaHeladeras {
 
     public List<RegistroRetiroDTO> obtenerRetirosDelDia(Integer heladeraId) {
 
-     return this.retiroRepository.findRetirosByHeladeraAndToday(Long.valueOf(heladeraId))
+        var heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
+
+     return this.retiroRepository.findRetirosByHeladeraAndToday(heladera.getId())
              .stream().map(this.retiroMapper::map).toList();
     }
 }
