@@ -3,7 +3,6 @@ package ar.edu.utn.dds.k3003.app;
 import ar.edu.utn.dds.k3003.clientes.colaboradores.ColaboradoresProxy;
 import ar.edu.utn.dds.k3003.clientes.viandas.ViandasProxy;
 
-import ar.edu.utn.dds.k3003.model.MyJob;
 import ar.edu.utn.dds.k3003.model.controller.HeladeraController;
 import ar.edu.utn.dds.k3003.model.controller.MetricsController;
 import ar.edu.utn.dds.k3003.model.controller.TemperaturaController;
@@ -15,8 +14,6 @@ import io.javalin.Javalin;
 import io.javalin.micrometer.MicrometerPlugin;
 import io.micrometer.core.instrument.binder.jvm.*;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
-
-import java.util.Timer;
 
 public class WebApp {
 
@@ -52,6 +49,7 @@ public class WebApp {
         app.get("/heladeras/{id}", heladeraController::obtener);
         app.post("/temperaturas", temperaturaController::agregar);
         app.get("/heladeras/{id}/temperaturas", temperaturaController::obtener);
+        app.get("/heladeras/{id}/capacidad", heladeraController::getCapacidad);
         app.post("/heladeras/{id}/suscribir", heladeraController::suscribirse);
         app.delete("/heladeras/{heladera_id}/suscribir/{colaborador_id}", heladeraController::desuscribirse);
         app.post("/heladeras/{id}/falla", heladeraController::reportarFalla);

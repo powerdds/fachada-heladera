@@ -234,4 +234,23 @@ public class HeladeraController {
             context.status(status).json(respuestaDTO);
         }
     }
+
+    public void getCapacidad(@NotNull Context context) {
+
+        var heladeraId = context.pathParamAsClass("id", Integer.class).get();
+        var status = 200;
+        try {
+            var capacidad = this.fachada.obtenerMensajeCapacidad(heladeraId);
+            context.status(status).json(capacidad);
+        } catch(NoSuchElementException ex){
+            status = 404;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        }
+
+    }
 }

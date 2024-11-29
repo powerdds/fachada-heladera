@@ -5,10 +5,7 @@ import ar.edu.utn.dds.k3003.facades.FachadaHeladeras;
 import ar.edu.utn.dds.k3003.facades.FachadaViandas;
 import ar.edu.utn.dds.k3003.facades.dtos.*;
 import ar.edu.utn.dds.k3003.model.*;
-import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
-import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaHeladeraDTO;
-import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
-import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
+import ar.edu.utn.dds.k3003.model.controller.dtos.*;
 import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
 import ar.edu.utn.dds.k3003.model.mappers.RetiroMapper;
 import ar.edu.utn.dds.k3003.repositories.AlertaRepository;
@@ -17,7 +14,6 @@ import ar.edu.utn.dds.k3003.model.mappers.TemperaturaMapper;
 import ar.edu.utn.dds.k3003.repositories.RetiroRepository;
 import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
 import ar.edu.utn.dds.k3003.utils.MetricsRegistry;
-import ar.edu.utn.dds.k3003.model.controller.dtos.RegistroRetiroDTO;
 import io.micrometer.core.instrument.Gauge;
 
 import java.time.LocalDateTime;
@@ -141,14 +137,14 @@ public class Fachada implements FachadaHeladeras {
         fachadaViandas.modificarHeladera(vianda.getCodigoQR(),heladeraId);
         heladera.depositarVianda();
         this.heladerasRepository.update(heladera);
-        actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
+        actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getCantidadViandas());
         actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
     }
 
     @Override public Integer cantidadViandas(Integer heladeraId) throws NoSuchElementException{
         Heladera heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
-      return heladera.getViandas();
+      return heladera.getCantidadViandas();
  }
 
     @Override public void retirar(RetiroDTO retiro) throws NoSuchElementException{
@@ -170,7 +166,7 @@ public class Fachada implements FachadaHeladeras {
             fachadaViandas.modificarHeladera(vianda.getCodigoQR(),-1);
             this.retiroRepository.save(new RegistroRetiro(vianda.getCodigoQR(), heladera));
             this.heladerasRepository.update(heladera);
-            actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
+            actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getCantidadViandas());
             actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
         } catch (Exception e) {
             throw new RuntimeException("No hay viandas para retirar");
@@ -219,11 +215,11 @@ public class Fachada implements FachadaHeladeras {
         this.fachadaColaboradores = colaboradores;
     }
 
-    public HeladeraDTO obtenerHeladera(Integer id){
+    public HeladeraIdDTO obtenerHeladera(Integer id){
         Heladera heladera = this.heladerasRepository.findById(Long.valueOf(id))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + id));
 
-        return heladeraMapper.map(heladera);
+        return heladeraMapper.mapId(heladera);
     }
     public Heladera obtenerHeladeraOrigin(Integer id){
         Heladera heladera = this.heladerasRepository.findById(Long.valueOf(id))
@@ -293,12 +289,12 @@ public class Fachada implements FachadaHeladeras {
             case MAXIMOVIANDAS -> {
                 colaboradores = colaboradores.stream()
                         .filter(colaboradorSuscrito -> colaboradorSuscrito.getMaximoViandas() != null)
-                        .filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
+                        .filter(colaboradorSuscrito -> heladera.getCantidadViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
             }
             case MINIMOVIANDAS ->{
                 colaboradores = colaboradores.stream()
                         .filter(colaboradorSuscrito -> colaboradorSuscrito.getMinimoViandas() != null)
-                        .filter(colaboradorSuscrito -> heladera.getViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
+                        .filter(colaboradorSuscrito -> heladera.getCantidadViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
             }
             default -> colaboradores.clear();
         }
@@ -337,5 +333,12 @@ public class Fachada implements FachadaHeladeras {
 
      return this.retiroRepository.findRetirosByHeladeraAndToday(heladera.getId())
              .stream().map(this.retiroMapper::map).toList();
+    }
+
+    public String obtenerMensajeCapacidad(Integer heladeraId) {
+        var heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
+
+        return heladera.GetMensajeCapacidad();
     }
 }
