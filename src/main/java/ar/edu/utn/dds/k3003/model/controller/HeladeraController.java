@@ -192,7 +192,7 @@ public class HeladeraController {
             context.status(status).json(respuestaDTO);
         } catch(Exception ex){
             status = 500;
-            System.out.println(ex);
+            System.out.println(ex.getMessage());
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ ex.getMessage(), null);
             context.status(status).json(respuestaDTO);
         }
@@ -206,6 +206,24 @@ public class HeladeraController {
             var alertas = this.fachada.obtenerAlertas(heladeraId);
             //RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Solicitud exitosa", alertas);
             context.status(status).json(alertas);
+        } catch(NoSuchElementException ex){
+            status = 404;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        } catch(Exception ex){
+            status = 500;
+            RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error interno: "+ex.getMessage(), null);
+            context.status(status).json(respuestaDTO);
+        }
+    }
+
+    public void getRetirosDelDia(@NotNull Context context) {
+
+        var heladeraId = context.pathParamAsClass("id", Integer.class).get();
+        var status = 200;
+        try {
+            var retiros = this.fachada.obtenerRetirosDelDia(heladeraId);
+            context.status(status).json(retiros);
         } catch(NoSuchElementException ex){
             status = 404;
             RespuestaDTO respuestaDTO = new RespuestaDTO(status, "Error de solicitud: " + ex.getMessage(), null);

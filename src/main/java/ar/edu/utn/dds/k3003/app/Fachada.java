@@ -4,20 +4,20 @@ import ar.edu.utn.dds.k3003.clientes.colaboradores.ColaboradoresProxy;
 import ar.edu.utn.dds.k3003.facades.FachadaHeladeras;
 import ar.edu.utn.dds.k3003.facades.FachadaViandas;
 import ar.edu.utn.dds.k3003.facades.dtos.*;
-import ar.edu.utn.dds.k3003.model.Alerta;
-import ar.edu.utn.dds.k3003.model.ColaboradorSuscrito;
-import ar.edu.utn.dds.k3003.model.Heladera;
-import ar.edu.utn.dds.k3003.model.Temperatura;
+import ar.edu.utn.dds.k3003.model.*;
 import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.AlertaHeladeraDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.SuscripcionDTO;
 import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 import ar.edu.utn.dds.k3003.model.mappers.HeladeraMapper;
+import ar.edu.utn.dds.k3003.model.mappers.RetiroMapper;
 import ar.edu.utn.dds.k3003.repositories.AlertaRepository;
 import ar.edu.utn.dds.k3003.repositories.HeladeraRepository;
 import ar.edu.utn.dds.k3003.model.mappers.TemperaturaMapper;
+import ar.edu.utn.dds.k3003.repositories.RetiroRepository;
 import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
 import ar.edu.utn.dds.k3003.utils.MetricsRegistry;
+import ar.edu.utn.dds.k3003.model.controller.dtos.RegistroRetiroDTO;
 import io.micrometer.core.instrument.Gauge;
 
 import java.time.LocalDateTime;
@@ -35,8 +35,10 @@ public class Fachada implements FachadaHeladeras {
  private final TemperaturaMapper temperaturaMapper;
 
  private final AlertaRepository alertaRepository;
+ private final RetiroRepository retiroRepository;
+ private final RetiroMapper retiroMapper;
 
- private FachadaViandas fachadaViandas;
+    private FachadaViandas fachadaViandas;
  private ColaboradoresProxy fachadaColaboradores;
 
     // Un mapa que contendrá las métricas de cantidad de viandas por heladeras
@@ -49,9 +51,23 @@ public class Fachada implements FachadaHeladeras {
   this.temperaturaRepository= new TemperaturaRepository();
   this.temperaturaMapper = new TemperaturaMapper();
   this.alertaRepository = new AlertaRepository();
+  this.retiroRepository = new RetiroRepository();
+  this.retiroMapper = new RetiroMapper();
   inicializarCantidadViandasPorHeladeras();
   inicializarCantidadAperturasxHeladera();
  }
+
+    public Fachada(HeladeraRepository heladerasRepository, HeladeraMapper heladeraMapper,
+                   TemperaturaRepository temperaturaRepository, TemperaturaMapper temperaturaMapper,
+                   AlertaRepository alertaRepository, RetiroRepository retiroRepository, RetiroMapper retiroMapper) {
+        this.heladerasRepository = heladerasRepository;
+        this.heladeraMapper = heladeraMapper;
+        this.temperaturaRepository = temperaturaRepository;
+        this.temperaturaMapper = temperaturaMapper;
+        this.alertaRepository = alertaRepository;
+        this.retiroRepository = retiroRepository;
+        this.retiroMapper = retiroMapper;
+    }
 
     private void inicializarCantidadAperturasxHeladera() {
         this.aperturasPorHeladeras = new ConcurrentHashMap<>();
@@ -92,8 +108,8 @@ public class Fachada implements FachadaHeladeras {
          actualizarMetricacantidadViandasHeladera(heladeraId, cantidadViandas);
      });
     }
-
     // Registrar o actualizar la métrica para una heladera específica
+
     private void actualizarMetricacantidadViandasHeladera(Long heladeraId, int cantidadViandas) {
         viandasPorHeladeras.computeIfAbsent(heladeraId, id -> {
             // Crear y registrar una nueva métrica si no existe para esta heladera
@@ -104,16 +120,6 @@ public class Fachada implements FachadaHeladeras {
                     .register(MetricsRegistry.getRegistry());
             return cantidadViandasRef;
         }).set(cantidadViandas);  // Actualizamos la temperatura si ya existe
-    }
-
-    public Fachada(HeladeraRepository heladerasRepository, HeladeraMapper heladeraMapper,
-                   TemperaturaRepository temperaturaRepository, TemperaturaMapper temperaturaMapper,
-                   AlertaRepository alertaRepository) {
-        this.heladerasRepository = heladerasRepository;
-        this.heladeraMapper = heladeraMapper;
-        this.temperaturaRepository = temperaturaRepository;
-        this.temperaturaMapper = temperaturaMapper;
-        this.alertaRepository = alertaRepository;
     }
 
     @Override public HeladeraDTO agregar(HeladeraDTO heladeraDTO){
@@ -162,6 +168,7 @@ public class Fachada implements FachadaHeladeras {
             heladera.retirarVianda();
             fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.RETIRADA);
             fachadaViandas.modificarHeladera(vianda.getCodigoQR(),-1);
+            this.retiroRepository.save(new RegistroRetiro(vianda.getCodigoQR(), heladera));
             this.heladerasRepository.update(heladera);
             actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
             actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
@@ -321,5 +328,11 @@ public class Fachada implements FachadaHeladeras {
         heladera.eliminarColaborador(colaboradorId);
 
         this.heladerasRepository.update(heladera);
+    }
+
+    public List<RegistroRetiroDTO> obtenerRetirosDelDia(Integer heladeraId) {
+
+     return this.retiroRepository.findRetirosByHeladeraAndToday(Long.valueOf(heladeraId))
+             .stream().map(this.retiroMapper::map).toList();
     }
 }

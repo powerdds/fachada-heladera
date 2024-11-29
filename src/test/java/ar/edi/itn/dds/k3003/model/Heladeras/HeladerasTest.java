@@ -31,7 +31,7 @@ public class HeladerasTest {
     private void initializeHeladerasTest(){
         repo=new HeladeraRepository();
         repoT=new TemperaturaRepository();
-        instancia=new Fachada(repo,new HeladeraMapper(),repoT,new TemperaturaMapper(), null);
+        instancia=new Fachada(repo,new HeladeraMapper(),repoT,new TemperaturaMapper(), null, null, null);
         instancia.setViandasProxy(fachadaViandas);
     }
     @BeforeEach

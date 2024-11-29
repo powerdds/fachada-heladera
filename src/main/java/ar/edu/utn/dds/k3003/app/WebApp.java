@@ -57,6 +57,7 @@ public class WebApp {
         app.post("/heladeras/{id}/falla", heladeraController::reportarFalla);
         app.patch("/heladeras/{id}/reparar", heladeraController::reparar);
         app.get("/heladeras/{id}/alertas", heladeraController::getAlertas);
+        app.get("/heladeras/{id}/retirosDelDia", heladeraController::getRetirosDelDia);
         app.post("/depositos", heladeraController::depositar);
         app.post("/retiros", heladeraController::retirar);
         app.get("/cleanup", heladeraController::cleanup);
