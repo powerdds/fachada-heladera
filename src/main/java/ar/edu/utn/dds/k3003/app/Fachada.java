@@ -129,10 +129,10 @@ public class Fachada implements FachadaHeladeras {
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
        ViandaDTO vianda = this.fachadaViandas.buscarXQR(qrVianda);
 
-        if(vianda.getEstado() != EstadoViandaEnum.PREPARADA
-                && vianda.getEstado()!=EstadoViandaEnum.EN_TRASLADO){
-            throw new RuntimeException("La Vianda "+qrVianda+ " no esta preparada ni en traslado, no se puede depositar");
-        }
+//        if(vianda.getEstado() != EstadoViandaEnum.PREPARADA
+//                && vianda.getEstado()!=EstadoViandaEnum.EN_TRASLADO){
+//            throw new RuntimeException("La Vianda "+qrVianda+ " no esta preparada ni en traslado, no se puede depositar");
+//        }
         fachadaViandas.modificarEstado(vianda.getCodigoQR(), EstadoViandaEnum.DEPOSITADA);
         fachadaViandas.modificarHeladera(vianda.getCodigoQR(),heladeraId);
         heladera.depositarVianda();
