@@ -335,10 +335,10 @@ public class Fachada implements FachadaHeladeras {
              .stream().map(this.retiroMapper::map).toList();
     }
 
-    public String obtenerMensajeCapacidad(Integer heladeraId) {
+    public MensajeCapacidadDTO obtenerMensajeCapacidad(Integer heladeraId) {
         var heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
 
-        return heladera.GetMensajeCapacidad();
+        return new MensajeCapacidadDTO(heladera.GetMensajeCapacidad());
     }
 }
