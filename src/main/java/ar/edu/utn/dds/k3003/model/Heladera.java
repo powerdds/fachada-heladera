@@ -17,7 +17,7 @@ public class Heladera {
     @Column(columnDefinition = "varchar")
     private String nombre;
     @Column
-    private int cantidadViandas;
+    private int viandas;
     @Column
     private int capacidadMax;
     @Column
@@ -42,7 +42,7 @@ public class Heladera {
 
     public Heladera(String nombre) {
         this.nombre = nombre;
-        this.cantidadViandas = 0;
+        this.viandas = 0;
         this.capacidadMax = 20;
         this.fechaInicioFuncionamiento = LocalDateTime.now();
         this.activa = true;
@@ -58,9 +58,9 @@ public class Heladera {
 
     public void depositarVianda() {
 
-        if (this.cantidadViandas < this.capacidadMax) {
+        if (this.viandas < this.capacidadMax) {
             this.cantidadAperturas++;
-            this.cantidadViandas++;
+            this.viandas++;
         } else {
             throw new NoSuchElementException("Se ha llegado a su capacidad maxima");
         }
@@ -68,9 +68,9 @@ public class Heladera {
 
     public void retirarVianda() {
 
-        if (this.cantidadViandas > 0) {
+        if (this.viandas > 0) {
             this.cantidadAperturas++;
-            this.cantidadViandas--;
+            this.viandas--;
         } else {
             throw new NoSuchElementException("No hay viandas para remover");
         }
@@ -121,12 +121,12 @@ public class Heladera {
         if(this.getCantidadOcupacionActual() == 0){
             ret = "La heladera " + this.getId() +
                     " tiene una capacidad de almacenar " + this.capacidadMax +
-                    " viandas y tiene almacenado " + this.cantidadViandas +
+                    " viandas y tiene almacenado " + this.viandas +
                     ". Ya no puede almacenar mas viandas";
         } else {
             ret = "La heladera " + this.getId() +
                     " tiene una capacidad de almacenar " + this.capacidadMax +
-                    " viandas y tiene almacenado " + this.cantidadViandas +
+                    " viandas y tiene almacenado " + this.viandas +
                     ". Puede almacenar " + this.getCantidadOcupacionActual() + " viandas";
         }
 
@@ -135,6 +135,6 @@ public class Heladera {
     }
 
     private int getCantidadOcupacionActual() {
-        return this.capacidadMax - this.cantidadViandas;
+        return this.capacidadMax - this.viandas;
     }
 }

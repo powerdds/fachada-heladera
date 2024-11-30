@@ -4,14 +4,13 @@ import ar.edu.utn.dds.k3003.facades.dtos.HeladeraDTO;
 import ar.edu.utn.dds.k3003.model.ColaboradorSuscrito;
 import ar.edu.utn.dds.k3003.model.Heladera;
 import ar.edu.utn.dds.k3003.model.controller.dtos.HeladeraIdDTO;
-import ar.edu.utn.dds.k3003.model.controller.dtos.TipoAlerta;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class HeladeraMapper {
     public HeladeraDTO map(Heladera heladera){
-        HeladeraDTO heladeraDTO = new HeladeraDTO(heladera.getId().intValue(),heladera.getNombre(),heladera.getCantidadViandas());
+        HeladeraDTO heladeraDTO = new HeladeraDTO(heladera.getId().intValue(),heladera.getNombre(),heladera.getViandas());
         heladeraDTO.setId(heladera.getId().intValue());
         return heladeraDTO;
     }
@@ -22,7 +21,7 @@ public class HeladeraMapper {
 
     public HeladeraIdDTO mapId(Heladera heladera){
         return new HeladeraIdDTO(Math.toIntExact(heladera.getId()),
-                heladera.getNombre(), heladera.getCantidadViandas(),
+                heladera.getNombre(), heladera.getViandas(),
                 heladera.getCapacidadMax(), heladera.isActiva(), heladera.getTipoIncidente(),
                 heladera.getColaboradores().stream().map(ColaboradorSuscrito::getColaboradorId).toList());
     }

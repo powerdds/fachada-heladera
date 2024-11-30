@@ -137,14 +137,14 @@ public class Fachada implements FachadaHeladeras {
         fachadaViandas.modificarHeladera(vianda.getCodigoQR(),heladeraId);
         heladera.depositarVianda();
         this.heladerasRepository.update(heladera);
-        actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getCantidadViandas());
+        actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
         actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
     }
 
     @Override public Integer cantidadViandas(Integer heladeraId) throws NoSuchElementException{
         Heladera heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
                 .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
-      return heladera.getCantidadViandas();
+      return heladera.getViandas();
  }
 
     @Override public void retirar(RetiroDTO retiro) throws NoSuchElementException{
@@ -166,7 +166,7 @@ public class Fachada implements FachadaHeladeras {
             fachadaViandas.modificarHeladera(vianda.getCodigoQR(),-1);
             this.retiroRepository.save(new RegistroRetiro(vianda.getCodigoQR(), heladera));
             this.heladerasRepository.update(heladera);
-            actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getCantidadViandas());
+            actualizarMetricacantidadViandasHeladera(heladera.getId(), heladera.getViandas());
             actualizarMetricacantidadAperturasHeladera(heladera.getId(),heladera.getCantidadAperturas());
         } catch (Exception e) {
             throw new RuntimeException("No hay viandas para retirar");
@@ -289,12 +289,12 @@ public class Fachada implements FachadaHeladeras {
             case MAXIMOVIANDAS -> {
                 colaboradores = colaboradores.stream()
                         .filter(colaboradorSuscrito -> colaboradorSuscrito.getMaximoViandas() != null)
-                        .filter(colaboradorSuscrito -> heladera.getCantidadViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
+                        .filter(colaboradorSuscrito -> heladera.getViandas()  >= colaboradorSuscrito.getMaximoViandas()).toList();
             }
             case MINIMOVIANDAS ->{
                 colaboradores = colaboradores.stream()
                         .filter(colaboradorSuscrito -> colaboradorSuscrito.getMinimoViandas() != null)
-                        .filter(colaboradorSuscrito -> heladera.getCantidadViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
+                        .filter(colaboradorSuscrito -> heladera.getViandas()  <= colaboradorSuscrito.getMinimoViandas()).toList();
             }
             default -> colaboradores.clear();
         }
